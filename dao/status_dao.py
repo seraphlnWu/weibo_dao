@@ -5,7 +5,7 @@ from bson.binary import Binary
 from base import BaseQuery
 from weibo_dao.dao.utils import MONGODB_INSTANCE, HBASE_INSTANCE
 from weibo_dao.parser.parser import ModelParser
-from weibo_dao.parser.utils import make_column_name
+#from weibo_dao.parser.utils import make_column_name
 from smdata.utils import paginate
 
 class StatusDao(BaseQuery):
@@ -25,7 +25,8 @@ class StatusDao(BaseQuery):
         ''' query one user '''
         column_list = []
         if columns:
-            column_list = [make_column_name('users', attr) for attr in columns]
+            #column_list = [make_column_name('users', attr) for attr in columns]
+            pass
         else:
             pass
 

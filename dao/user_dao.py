@@ -14,7 +14,7 @@ from influence_dao import get_cur_influence
 
 from weibo_dao.parser.parser import ModelParser
 
-from weibo_dao.parser.utils import make_column_name
+#from weibo_dao.parser.utils import make_column_name
 
 
 class UserDao(BaseQuery):
@@ -33,7 +33,8 @@ class UserDao(BaseQuery):
         ''' query one user '''
         column_list = []
         if args:
-            column_list = [make_column_name('users', attr) for attr in args]
+            #column_list = [make_column_name('users', attr) for attr in args]
+            pass
         else:
             pass
 
