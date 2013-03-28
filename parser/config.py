@@ -3,6 +3,18 @@
     config file for parser
 '''
 
+TABLE_DCT = {
+    'followers': '%(id)s',
+    'follow_relations': '%(user_id)s_%(follower_id)s',
+    'comments': '%(sm_user_id)s_%(status_id)s_%(id)s',
+    'reposts': '%(sm_user_id)s_%(retweeted_status_id)s_%(id)s',
+    'mentions': '%(sm_user_id)s_%(_id)s',
+    'mention_users': '%(sm_user_id)s_%(id)s',
+    'status': '%(user_id)s_%(id)s',
+    'buzz': '%(url)s_%(create_at)s',
+}
+
+
 FOLLOW_RELATIONS_COLUMN_DICT = {
     'created_at': {'column_name': 'fr:ca', 'type': 'datetime'},
     'followers_count': {'column_name': 'fr:foc', 'type': 'int'},

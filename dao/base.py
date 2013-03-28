@@ -1,11 +1,8 @@
 # coding=utf8
 from weibo_dao.dao.utils import HBASE_INSTANCE
-from weibo_dao.parser.utils import make_column_name
 from weibo_dao.parser.parser import ModelParser
 
-'''
-    base class for data query.  
-'''
+''' base class for data query.  '''
 
 class ResultList(list):
     ''' the return datastructure '''
@@ -32,8 +29,11 @@ class BaseQuery(object):
         @include_timestamp (bool) – whether timestamps are returned
         @batch_size (int) – batch size for retrieving results
         '''
-        
-        return [self.m_parser.parse(self.tb_name, self.table.scan(**kwargs))]
+
+        return self.m_parser.serialized_list(
+            self.tb_name,
+            self.table.scan(**kwargs),
+        )
 
     def query_one(self, id, **kwargs):
         '''
@@ -43,13 +43,13 @@ class BaseQuery(object):
         @timestamp (int) – timestamp (optional)
         @include_timestamp (bool) – whether timestamps are returned
         '''
-        
-        if 'columns' in kwargs:
-            kwargs['columns'] = [make_column_name(self.tb_name, attr) for attr in kwargs['columns']]
 
-        return self.m_parser.parse(
+        if 'columns' in kwargs:
+            kwargs['columns'] = [for attr in kwargs['columns']]
+
+        return self.m_parser.serialized(
             self.tb_name,
-            self.table.row(id, **kwargs)
+            self.table.row(id, **kwargs),
         )
 
     def put_one(self, id, data, **kwargs):
@@ -59,7 +59,7 @@ class BaseQuery(object):
         @data (dict) – the data to store
         @timestamp (int) – timestamp (optional)
         '''
-        self.table.put(id, self.m_parser.de_parse(data), **kwargs)
+        self.table.put(id, self.m_parser.deserialized(data), **kwargs)
 
     def delete(self, id, columns=None, **kwargs):
         '''
@@ -69,6 +69,12 @@ class BaseQuery(object):
         @timestamp (int) – timestamp (optional)
         '''
         
-        columns = make_column_name(self.tb_name, columns) if columns else None
         self.table.delete(id, columns=columns, **kwargs)
-        
+
+    def check_exists(self, id):
+        '''
+            check the given id if already exists.
+            @id(str) - the row key
+        '''
+        record = self.table.query_one(id=id)
+        return True if record else False
