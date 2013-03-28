@@ -165,3 +165,8 @@ STATUS_COLUMN_DICT = {
     'sm_eyeball_factor': {'column_name': 'st:eb', 'type': 'float'},
     'sm_flash_factor': {'column_name': 'st:fla', 'type': 'float'},
 }
+
+
+BUZZ_COLUMN_DICT = {
+    'content': {'column_name': 'bz:c', 'type': 'string'},
+}
