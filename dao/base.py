@@ -25,3 +25,7 @@ class BaseQuery(object):
     def delete(self, *args, **kwargs):
         ''' delete records with kwargs '''
         raise NotImplementedError
+
+    def check_exists(self, row_key):
+        ''' check if the given row_key stays in hbase '''
+        raise NotImplementedError
