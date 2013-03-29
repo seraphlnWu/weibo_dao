@@ -44,9 +44,6 @@ class BaseQuery(object):
         @include_timestamp (bool) – whether timestamps are returned
         '''
 
-        if 'columns' in kwargs:
-            kwargs['columns'] = [for attr in kwargs['columns']]
-
         return self.m_parser.serialized(
             self.tb_name,
             self.table.row(id, **kwargs),
@@ -76,5 +73,5 @@ class BaseQuery(object):
             check the given id if already exists.
             @id(str) - the row key
         '''
-        record = self.table.query_one(id=id)
+        record = self.query_one(id=id)
         return True if record else False
