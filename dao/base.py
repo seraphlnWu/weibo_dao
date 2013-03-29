@@ -31,6 +31,7 @@ class BaseQuery(object):
         @timestamp (int) – timestamp (optional)
         @include_timestamp (bool) – whether timestamps are returned
         @batch_size (int) – batch size for retrieving results
+        @limit (int) - number of records to be fetched
         '''
         
         return [self.m_parser.parse(self.tb_name, self.table.scan(**kwargs))]
@@ -71,4 +72,22 @@ class BaseQuery(object):
         
         columns = make_column_name(self.tb_name, columns) if columns else None
         self.table.delete(id, columns=columns, **kwargs)
-        
+
+
+    def counter_inc(self, row, column, value=1):
+        """
+        Atomically increment (or decrements) a counter column.
+        This method atomically increments or decrements a counter
+        column in the row specified by row. If the counter column
+        did not exist, it is automatically initialised to 0 before
+        incrementing it.
+
+        @row (str) – the row key
+        @column (str) – the column name
+        @value (int) – the amount to increment or decrement by (optional)
+        """
+        return self.table.counter_inc(row, column, value)
+
+
+    def counter_dec(self, row, column, value=1):
+        return self.table.counter_dec(row, column, value)
