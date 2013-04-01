@@ -48,7 +48,7 @@ class BaseQuery(object):
             self.tb_name,
             self.table.row(id, **kwargs),
         )
-
+    
     def put_one(self, id, data, **kwargs):
         '''
         put / update one record
@@ -56,7 +56,11 @@ class BaseQuery(object):
         @data (dict) – the data to store
         @timestamp (int) – timestamp (optional)
         '''
-        self.table.put(id, self.m_parser.deserialized(data), **kwargs)
+        self.table.put(
+            id,
+            self.m_parser.deserialized(self.tb_name, data),
+            **kwargs
+        )
 
     def delete(self, id, columns=None, **kwargs):
         '''

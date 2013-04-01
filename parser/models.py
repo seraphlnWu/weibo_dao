@@ -55,6 +55,7 @@ class Model(object):
                 rst[t_dct['column_name']] = DEPARSE_MAPPER[t_dct['type']](value)
             else:
                 pass
+
         return rst
 
     @classmethod

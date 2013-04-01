@@ -23,6 +23,7 @@ FOLLOW_RELATIONS_COLUMN_DICT = {
     'activeness': {'column_name': 'fr:act', 'type': 'float'},
     'sm_flwr_quality': {'column_name': 'fr:sfq', 'type': 'float'},
     'name': {'column_name': 'fr:n', 'type': 'string'},
+    'screen_name': {'column_name': 'fr:sn', 'type': 'string'},
     'gender': {'column_name': 'fr:gd', 'type': 'string'},
     'province': {'column_name': 'fr:pr', 'type': 'string'},
     'city': {'column_name': 'fr:ct', 'type': 'string'},

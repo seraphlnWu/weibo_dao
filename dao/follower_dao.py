@@ -12,12 +12,12 @@ FOLLOWER_TB = HBASE_INSTANCE.table('followers')
 FOLLOW_RELATION_TB = HBASE_INSTANCE.table('follow_relations')
 
 
-class FollowerDao(BaseQuery):
+class FollowersDao(BaseQuery):
     ''' inherit from base query '''
     #TODO, subclassing
     tb_name = 'followers'
 
-class FollowRelationDao(BaseQuery):
+class FollowRelationsDao(BaseQuery):
     #TODO, subclassing
     tb_name = 'follow_relations'
 
