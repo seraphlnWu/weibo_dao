@@ -12,7 +12,7 @@ class Parser(object):
         ''' parse the response and return the result ''' 
         raise NotImplementedError
            
-    def deserialized(self, prefix, method, payload):
+    def deserialized(self, method, payload):
         ''' deparse the response and return the result ''' 
         raise NotImplementedError
 
@@ -64,5 +64,5 @@ class ModelParser(Parser):
             result = model.deserialized_list(payload)
         else:
             result = model.deserialized(payload)
-
+        print result
         return result

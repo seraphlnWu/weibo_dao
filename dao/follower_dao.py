@@ -12,20 +12,21 @@ FOLLOWER_TB = HBASE_INSTANCE.table('followers')
 FOLLOW_RELATION_TB = HBASE_INSTANCE.table('follow_relations')
 
 
-class FollowerDao(BaseQuery):
+class FollowersDao(BaseQuery):
     ''' inherit from base query '''
     #TODO, subclassing
-    pass
+    tb_name = 'followers'
 
-class FollowRelationDao(BaseQuery):
+class FollowRelationsDao(BaseQuery):
     #TODO, subclassing
-    pass
+    tb_name = 'follow_relations'
 
 
 def get_follower_attr(uid, follower_id, attrs):
     """返回针对当前用户的评论数"""
     dao = FollowRelationDao()
     return dao.query_one(*attrs, id='%s_%s' % (uid, follower_id))
+
 
 def get_cache_flwr_by_page(
     uid,
