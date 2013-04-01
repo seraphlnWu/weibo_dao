@@ -28,6 +28,7 @@ class BaseQuery(object):
         @timestamp (int) – timestamp (optional)
         @include_timestamp (bool) – whether timestamps are returned
         @batch_size (int) – batch size for retrieving results
+        @limit (int) - number of records to be fetched
         '''
 
         return self.m_parser.serialized_list(
@@ -72,6 +73,25 @@ class BaseQuery(object):
         
         self.table.delete(id, columns=columns, **kwargs)
 
+
+    def counter_inc(self, row, column, value=1):
+        """
+        Atomically increment (or decrements) a counter column.
+        This method atomically increments or decrements a counter
+        column in the row specified by row. If the counter column
+        did not exist, it is automatically initialised to 0 before
+        incrementing it.
+
+        @row (str) – the row key
+        @column (str) – the column name
+        @value (int) – the amount to increment or decrement by (optional)
+        """
+        return self.table.counter_inc(row, column, value)
+
+
+    def counter_dec(self, row, column, value=1):
+        return self.table.counter_dec(row, column, value)
+
     def check_exists(self, id):
         '''
             check the given id if already exists.
@@ -79,3 +99,4 @@ class BaseQuery(object):
         '''
         record = self.query_one(id=id)
         return True if record else False
+
