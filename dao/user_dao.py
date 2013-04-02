@@ -17,6 +17,7 @@ from weibo_dao.parser.parser import ModelParser
 #from weibo_dao.parser.utils import make_column_name
 
 
+
 class UserDao(BaseQuery):
     ''' inherit from base query '''
 
@@ -51,7 +52,6 @@ class UserDao(BaseQuery):
     def delete(self, *args, **kwargs):
         ''' delete records '''
         pass
-
 
 def get_users():
     ''' 获取全部的用户信息列表 '''

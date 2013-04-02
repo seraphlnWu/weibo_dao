@@ -21,10 +21,9 @@ class FollowRelationsDao(BaseQuery):
     #TODO, subclassing
     tb_name = 'follow_relations'
 
-
 def get_follower_attr(uid, follower_id, attrs):
     """返回针对当前用户的评论数"""
-    dao = FollowRelationDao()
+    dao = FollowRelationsDao()
     return dao.query_one(*attrs, id='%s_%s' % (uid, follower_id))
 
 
