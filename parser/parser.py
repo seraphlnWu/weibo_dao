@@ -41,8 +41,7 @@ class ModelParser(Parser):
             model = getattr(self.model_factory, method)
         except AttributeError:
             raise DataError('No model for this payload type: %s' % (method))
-
-        if isinstance(payload, list):
+        if hasattr(payload, '__iter__'):
             result = model.serialized_list(payload)
         else:
             result = model.serialized(payload)
