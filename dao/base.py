@@ -31,7 +31,7 @@ class BaseQuery(object):
         @limit (int) - number of records to be fetched
         '''
 
-        return self.m_parser.serialized_list(
+        return self.m_parser.serialized(
             self.tb_name,
             self.table.scan(**kwargs),
         )
