@@ -34,6 +34,8 @@ FOLLOW_RELATIONS_COLUMN_DICT = {
     'verified': {'column_name': 'fr:vf', 'type': 'boolean'},
     'fme': {'column_name': 'fr:ff', 'type': 'boolean'},
     'bfcnt': {'column_name': 'fr:bf', 'type': 'int'},
+    'comment_count': {'column_name': 'fr:cc', 'type': 'int'},
+    'repost_count': {'column_name': 'fr:rc', 'type': 'int'},
 }
 
 FOLLOWERS_COLUMN_DICT = {
@@ -177,6 +179,8 @@ STATUS_COLUMN_DICT = {
     'original_pic': {'column_name': 'st:op', 'type': 'string'},
     'sm_eyeball_factor': {'column_name': 'st:eb', 'type': 'float'},
     'sm_flash_factor': {'column_name': 'st:fla', 'type': 'float'},
+    'comment_count': {'column_name': 'st:cc', 'type': 'int'},
+    'repost_count': {'column_namee': 'st:rc', 'type': 'int'},
 }
 
 

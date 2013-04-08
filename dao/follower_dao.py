@@ -14,11 +14,9 @@ FOLLOW_RELATION_TB = HBASE_INSTANCE.table('follow_relations')
 
 class FollowersDao(BaseQuery):
     ''' inherit from base query '''
-    #TODO, subclassing
     tb_name = 'followers'
 
 class FollowRelationsDao(BaseQuery):
-    #TODO, subclassing
     tb_name = 'follow_relations'
 
 def get_follower_attr(uid, follower_id, attrs):

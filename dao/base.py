@@ -92,10 +92,12 @@ class BaseQuery(object):
         @column (str) – the column name
         @value (int) – the amount to increment or decrement by (optional)
         """
+        column = self._convert_column_name([column])[0]
         return self.table.counter_inc(row, column, value)
 
 
     def counter_dec(self, row, column, value=1):
+        column = self._convert_column_name([column])[0]
         return self.table.counter_dec(row, column, value)
 
     def check_exists(self, id):
