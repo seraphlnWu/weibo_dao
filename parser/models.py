@@ -43,6 +43,7 @@ class Model(object):
         for key, value in json.iteritems():
             t_dct = self.reverse_column_dct.get(key)
             user[t_dct['column_name']] = PARSE_MAPPER[t_dct['type']](value)
+
         return user
 
     @classmethod
@@ -61,7 +62,7 @@ class Model(object):
     @classmethod
     def serialized_list(self, json_list):
         ''' serialized a list of hbase objects to json type. '''
-        return ResultSet([self.serialized(obj) for obj in json_list])
+        return ResultSet([self.serialized(v) for k, v in json_list])
 
     @classmethod
     def deserialized_list(self, json_list):

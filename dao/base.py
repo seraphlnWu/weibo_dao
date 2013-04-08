@@ -16,6 +16,7 @@ class BaseQuery(object):
         ''' init func '''
         self.m_parser = ModelParser()
         self.table = HBASE_INSTANCE.table(self.tb_name)
+        self.model = self.m_parser.get_model(self.tb_name)
 
     def query(self, **kwargs):
         '''
@@ -31,6 +32,9 @@ class BaseQuery(object):
         @limit (int) - number of records to be fetched
         '''
 
+        if 'columns' in kwargs:
+            kwargs['columns'] = self._convert_column_name(kwargs['columns'])
+
         return self.m_parser.serialized(
             self.tb_name,
             self.table.scan(**kwargs),
@@ -44,6 +48,8 @@ class BaseQuery(object):
         @timestamp (int) – timestamp (optional)
         @include_timestamp (bool) – whether timestamps are returned
         '''
+        if 'columns' in kwargs:
+            kwargs['columns'] = self._convert_column_name(kwargs['columns'])
 
         return self.m_parser.serialized(
             self.tb_name,
@@ -100,3 +106,7 @@ class BaseQuery(object):
         record = self.query_one(id=id)
         return True if record else False
 
+
+    def _convert_column_name(self, columns):
+        return [self.model.columns_dct[c]['column_name']
+                for c in columns if c in self.model.columns_dct]
