@@ -1,22 +1,10 @@
 # coding=utf8
 
-from datetime import datetime
-
 from base import BaseQuery
-from base import ResultList
-
-from utils import MONGODB_INSTANCE
-from utils import HBASE_INSTANCE
-
-from utils import compare_value
-
+from utils import get_hbase_instance
+from utils import MONGODB_INSTANCE as db
 from influence_dao import get_cur_influence
-
 from weibo_dao.parser.parser import ModelParser
-
-#from weibo_dao.parser.utils import make_column_name
-
-
 
 class UserDao(BaseQuery):
     ''' inherit from base query '''
@@ -24,7 +12,7 @@ class UserDao(BaseQuery):
     def __init__(self):
         ''' init func '''
         self.m_parser = ModelParser()
-        self.table = HBASE_INSTANCE.table('users')
+        self.table = get_hbase_instance().table('users')
 
     def query(self, *args, **kwargs):
         ''' query users '''
@@ -215,3 +203,12 @@ def get_fuids(uid, with_followbrand_count=False):
         result.append(info.get('max_followbrand_count', None))
 
     return result
+
+def get_buzz_keywords(uid):
+    """ get buzz_keywords """
+    usr = db.users.find_one({'_id': uid}, {'buzz_keywords': 1})
+    if usr:
+        return usr.get('buzz_keywords', [])
+    else:
+        return []
+    

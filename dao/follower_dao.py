@@ -5,11 +5,7 @@ from datetime import datetime
 from base import BaseQuery
 
 from utils import MONGODB_INSTANCE
-from utils import HBASE_INSTANCE
-from smdata.tasks import save_cache_flwr_list
 
-FOLLOWER_TB = HBASE_INSTANCE.table('followers')
-FOLLOW_RELATION_TB = HBASE_INSTANCE.table('follow_relations')
 
 
 class FollowersDao(BaseQuery):
@@ -78,14 +74,8 @@ def get_flwr_cache(uid, sort_type):
     """
     TODO
     """
-    flwr_cache = MONGODB_INSTANCE.flwr_cache.find_one({'_id': uid}, {sort_type: 1})
-
-    if not flwr_cache or not flwr_cache.get(sort_type):
-        save_cache_flwr_list(uid, keyword_list=[sort_type])
-        flwr_cache = MONGODB_INSTANCE.flwr_cache.find_one({'_id': uid}, {sort_type: 1})
-
-    return flwr_cache.get(sort_type)
-
+    return
+    
 def get_followers_by_page(uid, 
     sort_type='all',
     page=1, 

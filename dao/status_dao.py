@@ -3,17 +3,23 @@ from bson import ObjectId
 from bson.binary import Binary
 
 from base import BaseQuery
-from weibo_dao.dao.utils import MONGODB_INSTANCE, HBASE_INSTANCE
-from weibo_dao.parser.parser import ModelParser
+from weibo_dao.dao.utils import MONGODB_INSTANCE
 #from weibo_dao.parser.utils import make_column_name
-from smdata.utils import paginate
+
+def paginate(
+    st_list, 
+    sort_type, 
+    page, 
+    records_per_page, 
+    sort_reverse=True
+):
+
+    return
 
 class StatusDao(BaseQuery):
     ''' inherit from base query '''
 
     tb_name = 'status'
-
-Status = StatusDao()
 
 def save_sent_status(user_name, uid, pic_name, message, upt, cd=None):
     ''' save a status which need to be sent '''

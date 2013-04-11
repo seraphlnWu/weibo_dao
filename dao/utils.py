@@ -38,7 +38,6 @@ def get_hbase_instance(hbase_host=HBASE_HOST, autoconnect=True):
 
 MONGODB_INSTANCE = get_db()
 
-HBASE_INSTANCE = get_hbase_instance()
 
 
 def today_datetime():
