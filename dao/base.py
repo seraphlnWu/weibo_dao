@@ -100,7 +100,7 @@ class BaseQuery(object):
         column = self._convert_column_name([column])[0]
         return self.table.counter_dec(row, column, value)
 
-    def check_exists(self, id):
+    def exist(self, id):
         '''
             check the given id if already exists.
             @id(str) - the row key

@@ -215,3 +215,13 @@ def get_fuids(uid, with_followbrand_count=False):
         result.append(info.get('max_followbrand_count', None))
 
     return result
+
+
+def get_buzz_keywords(uid):
+    """ get buzz_keywords """
+    usr = MONGODB_INSTANCE.users.find_one({'_id': uid}, {'buzz_keywords': 1})
+    if usr:
+        return usr.get('buzz_keywords', [])
+    else:
+        return []
+
