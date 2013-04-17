@@ -66,6 +66,7 @@ FOLLOWERS_COLUMN_DICT = {
 }
 
 COMMENTS_COLUMN_DICT = {
+    'id': {'column_name': 'cm:id', 'type': 'int'},
     'sm_user_id': {'column_name': 'cm:su', 'type': 'int'},
     'user_id': {'column_name': 'cm:ui', 'type': 'int'},
     'user_name': {'column_name': 'cm:un', 'type': 'string'},
@@ -89,6 +90,7 @@ COMMENTS_COLUMN_DICT = {
 
 
 REPOSTS_COLUMN_DICT = {
+    'id': {'column_name': 'rp:id', 'type': 'int'},
     'sm_user_id': {'column_name': 'rp:ui', 'type': 'int'},
     'user_id': {'column_name': 'rp:rui', 'type': 'int'},
     'user_screen_name': {'column_name': 'rp:rn', 'type': 'string'},
@@ -112,6 +114,7 @@ REPOSTS_COLUMN_DICT = {
 }
 
 MENTIONS_COLUMN_DICT = {
+    'id': {'column_name': 'mt:id', 'type': 'int'},
     'user_id': {'column_name': 'mt:ui', 'type': 'int'},
     'user_screen_name': {'column_name': 'mt:un', 'type': 'string'},
     'sct': {'column_name': 'mt:sc', 'type': 'int'},
@@ -155,6 +158,7 @@ MENTION_USERS_COLUMN_DICT = {
 
 
 STATUS_COLUMN_DICT = {
+    'id': {'column_name': 'st:id', 'type': 'int'},
     'user_id': {'column_name': 'st:ui', 'type': 'int'},
     'text': {'column_name': 'st:txt', 'type': 'string'},
     'created_at': {'column_name': 'st:ca', 'type': 'datetime'},
@@ -181,6 +185,7 @@ STATUS_COLUMN_DICT = {
     'sm_flash_factor': {'column_name': 'st:fla', 'type': 'float'},
     'comment_count': {'column_name': 'st:cc', 'type': 'int'},
     'repost_count': {'column_namee': 'st:rc', 'type': 'int'},
+    'last_repost_id': {'column_name': 'st:lr', 'type': 'int'},
 }
 
 
