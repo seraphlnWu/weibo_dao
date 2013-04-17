@@ -3,49 +3,23 @@ from bson import ObjectId
 from bson.binary import Binary
 
 from base import BaseQuery
-from weibo_dao.dao.utils import MONGODB_INSTANCE, HBASE_INSTANCE
-from weibo_dao.parser.parser import ModelParser
+from weibo_dao.dao.utils import MONGODB_INSTANCE
 #from weibo_dao.parser.utils import make_column_name
-from smdata.utils import paginate
+
+def paginate(
+    st_list, 
+    sort_type, 
+    page, 
+    records_per_page, 
+    sort_reverse=True
+):
+
+    return
 
 class StatusDao(BaseQuery):
     ''' inherit from base query '''
 
-    def __init__(self):
-        ''' init func '''
-        self.m_parser = ModelParser()
-        self.table = HBASE_INSTANCE.table('status')
-        self.db = MONGODB_INSTANCE
-
-    def query(self, *args, **kwargs):
-        ''' query users '''
-        return [self.m_parser('user', self.table.scan(**kwargs))]
-
-    def query_one(self, id, columns=None, **kwargs):
-        ''' query one user '''
-        column_list = []
-        if columns:
-            #column_list = [make_column_name('users', attr) for attr in columns]
-            pass
-        else:
-            pass
-
-        return self.m_parser.parse(
-            'user',
-            self.table.row(id, columns=column_list, **kwargs),
-        )
-
-    def put_one(self, *args, **kwargs):
-        ''' put / update one user '''
-        row_key = kwargs.pop('id')
-        self.table.put(str(row_key), self.m_parser.de_parse(kwargs))
-
-    def delete(self, *args, **kwargs):
-        ''' delete records '''
-        pass
-
-Status = StatusDao()
-
+    tb_name = 'status'
 
 def save_sent_status(user_name, uid, pic_name, message, upt, cd=None):
     ''' save a status which need to be sent '''

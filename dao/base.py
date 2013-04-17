@@ -1,5 +1,5 @@
 # coding=utf8
-from weibo_dao.dao.utils import HBASE_INSTANCE
+from weibo_dao.dao.utils import get_hbase_instance
 from weibo_dao.parser.parser import ModelParser
 
 ''' base class for data query.  '''
@@ -15,8 +15,13 @@ class BaseQuery(object):
     def __init__(self):
         ''' init func '''
         self.m_parser = ModelParser()
-        self.table = HBASE_INSTANCE.table(self.tb_name)
+        self.model = self.m_parser.get_model(self.tb_name)
 
+
+    def init_table(self):
+        if not getattr(self, 'table', None):
+            self.table = get_hbase_instance().table(self.tb_name)
+    
     def query(self, **kwargs):
         '''
         query a bunch of results
@@ -30,8 +35,11 @@ class BaseQuery(object):
         @batch_size (int) – batch size for retrieving results
         @limit (int) - number of records to be fetched
         '''
+        self.init_table()
+        if 'columns' in kwargs:
+            kwargs['columns'] = self._convert_column_name(kwargs['columns'])
 
-        return self.m_parser.serialized_list(
+        return self.m_parser.serialized(
             self.tb_name,
             self.table.scan(**kwargs),
         )
@@ -44,6 +52,9 @@ class BaseQuery(object):
         @timestamp (int) – timestamp (optional)
         @include_timestamp (bool) – whether timestamps are returned
         '''
+        self.init_table()
+        if 'columns' in kwargs:
+            kwargs['columns'] = self._convert_column_name(kwargs['columns'])
 
         return self.m_parser.serialized(
             self.tb_name,
@@ -57,6 +68,8 @@ class BaseQuery(object):
         @data (dict) – the data to store
         @timestamp (int) – timestamp (optional)
         '''
+
+        self.init_table()
         self.table.put(
             id,
             self.m_parser.deserialized(self.tb_name, data),
@@ -70,7 +83,7 @@ class BaseQuery(object):
         @columns (list_or_tuple) – list of columns (optional)
         @timestamp (int) – timestamp (optional)
         '''
-        
+        self.init_table()
         self.table.delete(id, columns=columns, **kwargs)
 
 
@@ -86,13 +99,17 @@ class BaseQuery(object):
         @column (str) – the column name
         @value (int) – the amount to increment or decrement by (optional)
         """
+        self.init_table()
+        column = self._convert_column_name([column])[0]
         return self.table.counter_inc(row, column, value)
 
 
     def counter_dec(self, row, column, value=1):
+        self.init_table()
+        column = self._convert_column_name([column])[0]
         return self.table.counter_dec(row, column, value)
 
-    def check_exists(self, id):
+    def exist(self, id):
         '''
             check the given id if already exists.
             @id(str) - the row key
@@ -100,3 +117,10 @@ class BaseQuery(object):
         record = self.query_one(id=id)
         return True if record else False
 
+
+    def _convert_column_name(self, columns):
+        '''
+        convert general column name to hbase column names
+        '''
+        return [self.model.columns_dct[c]['column_name']
+                for c in columns if c in self.model.columns_dct]

@@ -3,7 +3,6 @@ from datetime import timedelta
 
 from utils import MONGODB_INSTANCE
 from utils import today_datetime
-from smdata.utils import get_influence_list
 
 def get_cur_influence(uid):
     '获取用户可变属性。eg:影响力，粉丝数，微博数'
@@ -277,3 +276,23 @@ def get_influence_by_date(
         return MONGODB_INSTANCE.influence.find({'id': uid}).sort(sort_type, sort_reverse).limit(limit)
     else:
         return MONGODB_INSTANCE.influence.find({'id': uid}).sort(sort_type, sort_reverse)
+
+def get_influence_list(histories):
+    his_list = []
+    for his in histories:
+        if any([
+            his.get('account_activeness', 0),
+            his.get('followers_quality', 0),
+            his.get('followers_activeness', 0)
+        ]):
+            if len(his_list) == 0:
+                his_list.append(his)
+            else:
+                if not (his['date'].day - his_list[-1]['date'].day):
+                    continue
+                else:
+                    his_list.append(his)
+        else:
+            continue
+    return his_list
+        
