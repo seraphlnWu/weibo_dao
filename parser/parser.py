@@ -58,7 +58,6 @@ class ModelParser(Parser):
             result = model.deserialized_list(payload)
         else:
             result = model.deserialized(payload)
-        print result
         return result
 
     def get_model(self, name):

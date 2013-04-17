@@ -211,4 +211,3 @@ def get_buzz_keywords(uid):
         return usr.get('buzz_keywords', [])
     else:
         return []
-    
