@@ -41,7 +41,7 @@ FOLLOW_RELATIONS_COLUMN_DICT = {
 }
 
 FOLLOWERS_COLUMN_DICT = {
-    'fid': {'column_name': 'fa:fid', 'type': 'int'},
+    'id': {'column_name': 'fa:fid', 'type': 'int'},
     'sm_update_time': {'column_name': 'fa:ut', 'type': 'datetime'},
     'name': {'column_name': 'fa:n', 'type': 'string'},
     'statuses_created_at': {'column_name': 'fa:sca', 'type': 'datetime'},
