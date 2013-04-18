@@ -16,8 +16,9 @@ def convert_data(o_value):
     ''' convert the given value to utf8 '''
     if isinstance(o_value, unicode):
         return o_value.encode('utf8')
-    else:
-        return str(o_value)
+    elif o_value is None:
+        return ''
+    return str(o_value)
 
 
 def parse_datetime_from_hbase(o_datetime):
@@ -48,7 +49,8 @@ def parse_float_from_hbase(o_value):
 
 def parse_list_from_hbase(o_value):
     ''' the strings with comma to be a list '''
-    return o_value.split(',')
+    
+    return o_value.split(',') if o_value else []
 
 
 def parse_datetime_into_hbase(o_datetime):
