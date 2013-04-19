@@ -109,10 +109,24 @@ class BaseQuery(object):
         column = self._convert_column_name([column])[0]
         return self.table.counter_dec(row, column, value)
 
+    def counter_get(self, row, column):
+        """
+        Retrieve the current value of a counter column. This method retrieves
+        the current value of a counter column. If the counter column does not
+        exist, this function initialises it to 0. Note that application code
+        should never store a incremented or decremented counter value
+        directly; use the atomic
+        @row (str) – the row key
+        @column (str) – the column name
+        """
+        self.init_table()
+        return self.table.counter_get(row, column)
+        
     def exist(self, id):
         '''
-            check the given id if already exists.
-            @id(str) - the row key
+        check the given id if already exists, subclass can rewrite
+        this method to fetch primary key to save io cost.
+        @id(str) - the row key
         '''
         record = self.query_one(id=id)
         return True if record else False
