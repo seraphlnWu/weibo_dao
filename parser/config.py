@@ -38,6 +38,9 @@ FOLLOW_RELATIONS_COLUMN_DICT = {
     'bfcnt': {'column_name': 'fr:bf', 'type': 'int'},
     'comment_count': {'column_name': 'fr:cc', 'type': 'int'},
     'repost_count': {'column_name': 'fr:rc', 'type': 'int'},
+    'ad_cate': {'column_name': 'fr:acte', 'type': 'float'},
+    'ad_sr': {'column_name': 'fr:asr', 'type': 'string'},
+    'ad_val': {'column_name': 'fr:avl', 'type': 'float'},
 }
 
 FOLLOWERS_COLUMN_DICT = {
@@ -66,6 +69,9 @@ FOLLOWERS_COLUMN_DICT = {
     'online': {'column_name': 'fa:ol', 'type': 'int'},
     'bfcnt': {'column_name': 'fa:bf', 'type': 'int'},
     'sm_uids': {'column_name': 'fa:fu', 'type': 'list'},
+    'ad_cate': {'column_name': 'fa:acte', 'type': 'float'},
+    'ad_sr': {'column_name': 'fa:asr', 'type': 'string'},
+    'ad_val': {'column_name': 'fa:avl', 'type': 'float'},
 }
 
 COMMENTS_COLUMN_DICT = {
