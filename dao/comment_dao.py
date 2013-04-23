@@ -6,7 +6,11 @@ from datetime import timedelta
 
 from user_dao import get_keywords
 
+from base import BaseQuery
 
+class CommentsDao(BaseQuery):
+    tb_name = 'comments'
+    
 def get_comments_by_page(
     uid, 
     page=1, 

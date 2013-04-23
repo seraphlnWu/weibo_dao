@@ -21,6 +21,7 @@ from config import REPOSTS_COLUMN_DICT
 from config import MENTIONS_COLUMN_DICT
 from config import MENTION_USERS_COLUMN_DICT
 from config import STATUS_COLUMN_DICT
+from config import FOLLOWBRAND_FLWR_RELATIONS_COLUMN_DICT
 from config import BUZZ_COLUMN_DICT
 
 
@@ -43,6 +44,7 @@ class Model(object):
         for key, value in json.iteritems():
             t_dct = self.reverse_column_dct.get(key)
             user[t_dct['column_name']] = PARSE_MAPPER[t_dct['type']](value)
+
         return user
 
     @classmethod
@@ -55,13 +57,12 @@ class Model(object):
                 rst[t_dct['column_name']] = DEPARSE_MAPPER[t_dct['type']](value)
             else:
                 pass
-
         return rst
 
     @classmethod
     def serialized_list(self, json_list):
         ''' serialized a list of hbase objects to json type. '''
-        return ResultSet([self.serialized(obj) for obj in json_list])
+        return ResultSet([self.serialized(v) for k, v in json_list])
 
     @classmethod
     def deserialized_list(self, json_list):
@@ -79,6 +80,20 @@ class FollowRelations(Model):
     ''' follow_relations model.  '''
     columns_dct, reverse_column_dct = reverse_the_column_to_key(
         FOLLOW_RELATIONS_COLUMN_DICT,
+    )
+
+
+class FollowbrandFlwrRelations(Model):
+    ''' followbrand flwr relations model. '''
+    columns_dct, reverse_column_dct = reverse_the_column_to_key(
+        FOLLOWBRAND_FLWR_RELATIONS_COLUMN_DICT,
+    )
+
+
+class FollowbrandFlwrsRelations(Model):
+    ''' followbrand flwrs model. '''
+    columns_dct, reverse_column_dct = reverse_the_column_to_key(
+        FOLLOWERS_COLUMN_DICT,
     )
 
 
@@ -131,6 +146,8 @@ class ModelFactory(object):
     '''
     follow_relations = FollowRelations
     followers = Followers
+    followbrand_flwr_relations = FollowbrandFlwrRelations
+    followbrand_flwrs = FollowBrandFlwrs
     comments = Comments
     reposts = Reposts
     mentions = Mentions

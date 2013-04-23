@@ -16,6 +16,8 @@ TABLE_DCT = {
 
 
 FOLLOW_RELATIONS_COLUMN_DICT = {
+    'uid': {'column_name': 'fr:uid', 'type': 'int'},
+    'fid': {'column_name': 'fr:fid', 'type': 'int'},
     'created_at': {'column_name': 'fr:ca', 'type': 'datetime'},
     'followers_count': {'column_name': 'fr:foc', 'type': 'int'},
     'statuses_count': {'column_name': 'fr:sc', 'type': 'int'},
@@ -34,9 +36,15 @@ FOLLOW_RELATIONS_COLUMN_DICT = {
     'verified': {'column_name': 'fr:vf', 'type': 'boolean'},
     'fme': {'column_name': 'fr:ff', 'type': 'boolean'},
     'bfcnt': {'column_name': 'fr:bf', 'type': 'int'},
+    'comment_count': {'column_name': 'fr:cc', 'type': 'int'},
+    'repost_count': {'column_name': 'fr:rc', 'type': 'int'},
+    'ad_cate': {'column_name': 'fr:acte', 'type': 'float'},
+    'ad_sr': {'column_name': 'fr:asr', 'type': 'string'},
+    'ad_val': {'column_name': 'fr:avl', 'type': 'float'},
 }
 
 FOLLOWERS_COLUMN_DICT = {
+    'id': {'column_name': 'fa:fid', 'type': 'int'},
     'sm_update_time': {'column_name': 'fa:ut', 'type': 'datetime'},
     'name': {'column_name': 'fa:n', 'type': 'string'},
     'statuses_created_at': {'column_name': 'fa:sca', 'type': 'datetime'},
@@ -61,9 +69,13 @@ FOLLOWERS_COLUMN_DICT = {
     'online': {'column_name': 'fa:ol', 'type': 'int'},
     'bfcnt': {'column_name': 'fa:bf', 'type': 'int'},
     'sm_uids': {'column_name': 'fa:fu', 'type': 'list'},
+    'ad_cate': {'column_name': 'fa:acte', 'type': 'float'},
+    'ad_sr': {'column_name': 'fa:asr', 'type': 'string'},
+    'ad_val': {'column_name': 'fa:avl', 'type': 'float'},
 }
 
 COMMENTS_COLUMN_DICT = {
+    'id': {'column_name': 'cm:id', 'type': 'int'},
     'sm_user_id': {'column_name': 'cm:su', 'type': 'int'},
     'user_id': {'column_name': 'cm:ui', 'type': 'int'},
     'user_name': {'column_name': 'cm:un', 'type': 'string'},
@@ -87,6 +99,7 @@ COMMENTS_COLUMN_DICT = {
 
 
 REPOSTS_COLUMN_DICT = {
+    'id': {'column_name': 'rp:id', 'type': 'int'},
     'sm_user_id': {'column_name': 'rp:ui', 'type': 'int'},
     'user_id': {'column_name': 'rp:rui', 'type': 'int'},
     'user_screen_name': {'column_name': 'rp:rn', 'type': 'string'},
@@ -110,6 +123,7 @@ REPOSTS_COLUMN_DICT = {
 }
 
 MENTIONS_COLUMN_DICT = {
+    'id': {'column_name': 'mt:id', 'type': 'int'},
     'user_id': {'column_name': 'mt:ui', 'type': 'int'},
     'user_screen_name': {'column_name': 'mt:un', 'type': 'string'},
     'sct': {'column_name': 'mt:sc', 'type': 'int'},
@@ -153,6 +167,7 @@ MENTION_USERS_COLUMN_DICT = {
 
 
 STATUS_COLUMN_DICT = {
+    'id': {'column_name': 'st:id', 'type': 'int'},
     'user_id': {'column_name': 'st:ui', 'type': 'int'},
     'text': {'column_name': 'st:txt', 'type': 'string'},
     'created_at': {'column_name': 'st:ca', 'type': 'datetime'},
@@ -177,6 +192,39 @@ STATUS_COLUMN_DICT = {
     'original_pic': {'column_name': 'st:op', 'type': 'string'},
     'sm_eyeball_factor': {'column_name': 'st:eb', 'type': 'float'},
     'sm_flash_factor': {'column_name': 'st:fla', 'type': 'float'},
+    'comment_count': {'column_name': 'st:cc', 'type': 'int'},
+    'repost_count': {'column_name': 'st:rc', 'type': 'int'},
+    'last_repost_id': {'column_name': 'st:lr', 'type': 'int'},
+}
+
+
+FOLLOWBRAND_FLWR_RELATIONS_COLUMN_DICT = {
+    'uid': {'column_name': 'ffr:uid', 'type': 'int'},
+    'fid': {'column_name': 'ffr:fid', 'type': 'int'},
+    'created_at': {'column_name': 'ffr:ca', 'type': 'datetime'},
+    'followers_count': {'column_name': 'ffr:foc', 'type': 'int'},
+    'statuses_count': {'column_name': 'ffr:sc', 'type': 'int'},
+    'friends_count': {'column_name': 'ffr:frc', 'type': 'int'},
+    'activeness': {'column_name': 'ffr:act', 'type': 'float'},
+    'sm_flwr_quality': {'column_name': 'ffr:sfq', 'type': 'float'},
+    'name': {'column_name': 'ffr:n', 'type': 'string'},
+    'screen_name': {'column_name': 'ffr:sn', 'type': 'string'},
+    'gender': {'column_name': 'ffr:gd', 'type': 'string'},
+    'province': {'column_name': 'ffr:pr', 'type': 'string'},
+    'city': {'column_name': 'ffr:ct', 'type': 'string'},
+    'location': {'column_name': 'ffr:loc', 'type': 'string'},
+    'tags': {'column_name': 'ffr:t', 'type': 'list'},
+    'profile_image_url': {'column_name': 'ffr:piu', 'type': 'string'},
+    'favourites_count': {'column_name': 'ffr:fc', 'type': 'int'},
+    'verified': {'column_name': 'ffr:vf', 'type': 'boolean'},
+    'fme': {'column_name': 'ffr:ff', 'type': 'boolean'},
+    'bfcnt': {'column_name': 'ffr:bf', 'type': 'int'},
+    'comment_count': {'column_name': 'ffr:cc', 'type': 'int'},
+    'repost_count': {'column_name': 'ffr:rc', 'type': 'int'},
+    'ad_cate': {'column_name': 'ffr:acte', 'type': 'float'},
+    'ad_sr': {'column_name': 'ffr:asr', 'type': 'string'},
+    'ad_val': {'column_name': 'ffr:avl', 'type': 'float'},
+
 }
 
 

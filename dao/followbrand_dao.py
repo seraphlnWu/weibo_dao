@@ -2,8 +2,13 @@
 from utils import MONGODB_INSTANCE
 
 from user_dao import get_fuids
+from base import BaseQuery
 
 from influence_dao import get_influence_by_date
+
+
+class FollowbrandsDao(BaseQuery):
+    tb_name = 'followbrand'
 
 
 def get_followbrands(uid, uidlist, sort_type='influence', sort_reverse=-1):
