@@ -131,6 +131,7 @@ class ModelFactory(object):
     '''
     follow_relations = FollowRelations
     followers = Followers
+    followbrand = Followbrand
     comments = Comments
     reposts = Reposts
     mentions = Mentions
