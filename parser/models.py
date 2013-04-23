@@ -90,7 +90,7 @@ class FollowbrandFlwrRelations(Model):
     )
 
 
-class FollowbrandFlwrsRelations(Model):
+class FollowbrandFlwrs(Model):
     ''' followbrand flwrs model. '''
     columns_dct, reverse_column_dct = reverse_the_column_to_key(
         FOLLOWERS_COLUMN_DICT,
@@ -147,7 +147,7 @@ class ModelFactory(object):
     follow_relations = FollowRelations
     followers = Followers
     followbrand_flwr_relations = FollowbrandFlwrRelations
-    followbrand_flwrs = FollowBrandFlwrs
+    followbrand_flwrs = FollowbrandFlwrs
     comments = Comments
     reposts = Reposts
     mentions = Mentions
