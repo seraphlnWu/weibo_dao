@@ -11,6 +11,14 @@ class FollowbrandsDao(BaseQuery):
     tb_name = 'followbrand'
 
 
+class FollowbrandFlwrRelationsDao(BaseQuery):
+    tb_name = 'followbrand_flwr_relations'
+
+
+class FollowbrandFlwrsDao(BaseQuery):
+    tb_name = 'followbrand_flwrs'
+
+
 def get_followbrands(uid, uidlist, sort_type='influence', sort_reverse=-1):
     '''
     input:
