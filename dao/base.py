@@ -2,6 +2,10 @@
 from weibo_dao.dao.utils import get_hbase_instance
 from weibo_dao.parser.parser import ModelParser
 
+from config import HBASE_HOST
+import happybase
+
+
 ''' base class for data query.  '''
 
 class ResultList(list):
@@ -12,15 +16,25 @@ class BaseQuery(object):
 
     tb_name = ''
     
-    def __init__(self):
+    def __init__(self, hbase_host=HBASE_HOST, autoconnect=True, compat='0.90'):
         ''' init func '''
+        self.hbase_host = hbase_host
+        self.autoconnect = autoconnect
+        self.compat = compat
+
         self.m_parser = ModelParser()
         self.model = self.m_parser.get_model(self.tb_name)
+        self.connection = None
 
 
     def init_table(self):
         if not getattr(self, 'table', None):
-            self.table = get_hbase_instance().table(self.tb_name)
+            self.connection = happybase.Connection(
+                self.hbase_host,
+                autoconnect=self.autoconnect,
+                compat=self.compat,
+            )
+            self.table = self.connection.table(self.tb_name)
     
     def query(self, **kwargs):
         '''
@@ -138,3 +152,7 @@ class BaseQuery(object):
         '''
         return [self.model.columns_dct[c]['column_name']
                 for c in columns if c in self.model.columns_dct]
+
+    def close(self):
+        ''' close the connection '''
+        self.connection.close()
