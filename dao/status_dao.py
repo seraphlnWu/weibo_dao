@@ -6,15 +6,7 @@ from base import BaseQuery
 from weibo_dao.dao.utils import MONGODB_INSTANCE
 #from weibo_dao.parser.utils import make_column_name
 
-def paginate(
-    st_list, 
-    sort_type, 
-    page, 
-    records_per_page, 
-    sort_reverse=True
-):
-
-    return
+from smdata.utils import paginate
 
 class StatusDao(BaseQuery):
     ''' inherit from base query '''
