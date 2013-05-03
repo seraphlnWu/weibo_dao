@@ -6,73 +6,33 @@ from utils import MONGODB_INSTANCE as db
 from influence_dao import get_cur_influence
 from weibo_dao.parser.parser import ModelParser
 
-class UserDao(BaseQuery):
-    ''' inherit from base query '''
-
-    def __init__(self):
-        ''' init func '''
-        self.m_parser = ModelParser()
-        self.table = get_hbase_instance().table('users')
-
-    def query(self, *args, **kwargs):
-        ''' query users '''
-        return [self.m_parser('user', self.table.scan())]
-
-    def query_one(self, *args, **kwargs):
-        ''' query one user '''
-        column_list = []
-        if args:
-            #column_list = [make_column_name('users', attr) for attr in args]
-            pass
-        else:
-            pass
-
-        return self.m_parser.parse(
-            'user',
-            self.table.row(str(kwargs.get('id')), columns=column_list),
-        )
-
-    def put_one(self, *args, **kwargs):
-        ''' put / update one user '''
-        row_key = kwargs.pop('id')
-        self.table.put(str(row_key), self.m_parser.de_parse(kwargs))
-
-    def delete(self, *args, **kwargs):
-        ''' delete records '''
-        pass
 
 def get_users():
     ''' 获取全部的用户信息列表 '''
-    user_dao = UserDao()
-    return user_dao.query()
+    return db.users.find({'sm_deleted': {'$ne': True}})
 
 
 def get_user_by_id(uid):
     ''' 根据传入的uid获取相应的user信息 '''
-    user_dao = UserDao()
-    return user_dao.query_one(**{'id': uid})
+    return db.users.find_one({'_id': uid})
 
 
 def get_user_by_keyword(uid, *keywords):
     ''' 根据传入的uid列表获取相应的user信息 '''
-    user_dao = UserDao()
-    return user_dao.query_one(*keywords, **{'id': uid})
+    query_dict = dict([(cur_key, 1) for cur_key in keywords])
+    return db.users.find_one({'_id': uid}, query_dict)
 
 
 def get_user_info(uid, default=['id', 'screen_name']):
     ''' 获取用户基本信息 '''
-    user_dao = UserDao()
-    return user_dao.query_one(*default, **{'id': uid})
+    query_dict = {'id': 1, 'screen_name': 1}
+    return db.users.find_one({'_id': uid}, query_dict)
 
 
 def get_tasks(uid):
     ''' get a task list by uid '''
-    user_dao = UserDao()
-    tmp_user = user_dao.query_one(*['tasks'], **{'id': uid})
-    if tmp_user:
-        return tmp_user.get('tasks', [])
-
-    return []
+    tmp_user = db.users.find_one({'_id': uid}) or {}
+    return tmp_user.get('tasks', []) 
 
 
 def get_user(uid):
@@ -81,8 +41,7 @@ def get_user(uid):
         若库中没有用户记录，则按照
         new_user参数初始化用户基本信息。
     '''
-    user_dao = UserDao()
-    resultdict = user_dao.query_one(**{"id": uid})
+    resultdict = db.users.find_one({'_id': uid})
 
     if not resultdict:
         return {}
@@ -126,33 +85,27 @@ def add_task(uid, task):
     ]):
         return False
     else:
-        user_dao = UserDao()
-        user_dao.put_one(**{'id': uid, 'tasks': task_list, })
+        db.users.update(
+            {'_id': uid},
+            {'$addToSet': {'tasks': task}},
+            safe=True)
 
         return True
 
 
 def del_task(uid, task_timestamp, flag='tid'):
     ''' 删除一个待发送的微博 '''
-    task_list = get_tasks(uid)
-
-    for i, cur_task in enumerate(task_list):
-        if cur_task.get(flag) == task_timestamp:
-            del task_list[i]
-            break
-    else:
-        return True
-
-    user_dao = UserDao()
-    user_dao.put_one(**{'id': uid, 'tasks': task_list, })
-
+    db.users.update(
+        {'_id': uid},
+        {'$pull': {'tasks': {flag: task_timestamp}}},
+        safe=True
+    )
     return True
 
 
 def get_keywords(uid, k_type='buzz_keywords'):
     """ get keywords , default buzz_keywords """
-    user_dao = UserDao()
-    usr = user_dao.query_one(*[k_type], **{'id': uid})
+    usr = db.users.find_one({'_id': uid}, {k_type: 1})
     if usr:
         return usr.get(k_type, [])
     else:
@@ -162,12 +115,15 @@ def get_keywords(uid, k_type='buzz_keywords'):
 def set_keywords(uid, keywords=[], k_type='buzz_keywords'):
     """ set keywords ,  default buzz_keywords """
     flag = False
-    user_dao = UserDao()
-    usr = user_dao.query_one(*[k_type], **{'id': uid})
+    usr = db.users.find_one({'_id': uid}, {})
     if not all((usr, isinstance(keywords, list))):
         pass
     else:
-        user_dao.put_one(**{'id': uid, k_type: keywords})
+        db.users.update(
+            {'_id': uid},
+            {'$set': {k_type: keywords}},
+            safe=True)
+
         flag = True
 
     return flag
@@ -176,13 +132,14 @@ def set_keywords(uid, keywords=[], k_type='buzz_keywords'):
 def del_keyword(uid, keywords=[], k_type='buzz_keywords'):
     """ delete keywords , default buzz_keywords """
     flag = False
-    user_dao = UserDao()
-    usr = user_dao.query_one(*[k_type], **{'id': uid})
-
+    usr = db.users.find_one({'_id': uid}, {})
     if not all((usr, isinstance(keywords, list))):
         pass
     else:
-        user_dao.put_one(**{'id': uid, k_type: keywords})
+        db.users.update(
+            {'_id': uid},
+            {'$set': {k_type: keywords}},
+            safe=True)
         flag = True
 
     return flag
