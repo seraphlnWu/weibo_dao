@@ -5,6 +5,7 @@ from datetime import datetime
 from base import BaseQuery
 
 from utils import MONGODB_INSTANCE
+from utils import today_datetime
 
 
 
@@ -18,7 +19,7 @@ class FollowRelationsDao(BaseQuery):
 def get_follower_attr(uid, follower_id, attrs):
     """返回针对当前用户的评论数"""
     dao = FollowRelationsDao()
-    return dao.query_one(*attrs, id='%s_%s' % (uid, follower_id))
+    return dao.query_one(id='%s_%s' % (uid, follower_id), columns=attrs)
 
 
 def get_cache_flwr_by_page(
