@@ -1,7 +1,8 @@
 #coding:utf8
 
-from weibo_dao.dao.utils import MONGODB_INSTANCE
+from weibo_dao.dao.utils import MONGODB_INSTANCE as db
 from smdata.utils import paginate
+
 
 def get_tasks_by_page(
     username, 
@@ -10,7 +11,7 @@ def get_tasks_by_page(
     page=1, 
     records_per_page=10
 ):
-    tasks = MONGODB_INSTANCE.dtcenter.find(
+    tasks = db.dtcenter.find(
         {
             'username': username, 
             "user_id": uid

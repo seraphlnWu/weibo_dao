@@ -1,10 +1,6 @@
 # coding=utf8
-
-from base import BaseQuery
-from utils import get_hbase_instance
 from utils import MONGODB_INSTANCE as db
 from influence_dao import get_cur_influence
-from weibo_dao.parser.parser import ModelParser
 
 from statistic_dao import get_followers_quality_distr
 from statistic_dao import get_followers_tags_distr

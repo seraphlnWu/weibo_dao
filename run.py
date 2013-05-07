@@ -2,7 +2,6 @@
 
 from transform.models import HBaseClient
 from parser.parser import ModelParser
-import happybase
 
 HBASE_HOST = '192.168.122.101'
 
