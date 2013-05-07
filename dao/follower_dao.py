@@ -1,10 +1,12 @@
 # coding=utf8
 
 from datetime import datetime
+from datetime import timedelta
 
 from base import BaseQuery
 
 from utils import MONGODB_INSTANCE
+from utils import today_datetime
 
 
 
@@ -18,7 +20,7 @@ class FollowRelationsDao(BaseQuery):
 def get_follower_attr(uid, follower_id, attrs):
     """返回针对当前用户的评论数"""
     dao = FollowRelationsDao()
-    return dao.query_one(*attrs, id='%s_%s' % (uid, follower_id))
+    return dao.query_one(id='%s_%s' % (uid, follower_id), columns=attrs)
 
 
 def get_cache_flwr_by_page(
@@ -75,7 +77,62 @@ def get_flwr_cache(uid, sort_type):
     TODO
     """
     return
+
+
+def get_new_followers_by_page(
+    uid,
+    sort_type='all',
+    page=1,
+    records_per_page=10,
+    start_date=None,
+    end_date=None,
+    default_period=6,
+):
+    ''' get new followers by influence records '''
+
+    today = today_datetime()
+    results = []
+    new_f_list = []
+
+    end_date = end_date or today
+    start_date = start_date or end_date - timedelta(days=default_period)
+
+    for x in range((end_date-start_date).days):
+        tmp_date = end_date - timedelta(days=x)
+        tmp_inf = MONGODB_INSTANCE.influence.find_one({'id': uid, 'date': tmp_date}) or {}
+        new_f_list.extend(tmp_inf.get('new_fans_list', []))
+
+    total_count = len(new_f_list)
+    page_sum, rem = divmod(
+        total_count,
+        records_per_page,
+    )
+
+    page_sum += 1 if 0 == rem else page_sum
+
+    fids = new_f_list[(page-1)*records_per_page: (page*records_per_page)]
+     
+    if fids:
+        follow_relations = FollowRelationsDao()
+        for cur_id in fids:
+            print cur_id, uid
+            results.append(follow_relations.query_one("%s_%s" % (uid, cur_id)))  
+
+    page_info = ({
+        'records_per_page': records_per_page,
+        'sort_type': sort_type,
+        'page_totals': page_sum,
+        'total_count': total_count,
+        'current_page': int(page),
+        'pre_page': page - 1 if page > 1 else page,
+        'next_page': page + 1 if page < page_sum else page_sum,
+    })
+
+    return page_info, results 
     
+
+
+
 def get_followers_by_page(uid, 
     sort_type='all',
     page=1, 
@@ -171,3 +228,13 @@ def get_follower_all(uid, keyword):
         MONGODB_INSTANCE.follow_relations.find({'user_id': uid}).sort(keyword, -1).limit(50)
     )
     return inf
+
+
+def save_cur_follow_relation(dao, row_key, data):
+    ''' save the given follow_relation '''
+    dao.put_one(id=row_key, data=data)
+
+
+def save_cur_follower(dao, fid, data):
+    ''' save the given follower '''
+    dao.put_one(id=str(fid), data=data)

@@ -12,24 +12,94 @@ from random import shuffle
 from datetime import datetime
 
 
+def get_cur_statistic(uid):
+    ''' 获取用户的统计数据 '''
+    return MONGODB_INSTANCE.user_statistic.find_one({'_id': uid}) or {}
+
+
+def get_cur_fb_statistic(fid):
+    ''' 获取竞品的统计数据 '''
+    return MONGODB_INSTANCE.followbrand_statistic.find_one({'_id': fid}) or {}
+
+
 def get_followers_location_distr(uid, reftime=None):
     '''获取粉丝地理分布'''
-    return get_cur_influence(uid).get('followers_location_dist', {})
+    return get_cur_statistic(uid).get('location', {})
+
+
+def get_followbrand_flwrs_location_distr(fid, reftime=None):
+    '''获取粉丝地理分布'''
+    return get_cur_fb_statistic(fid).get('location', {})
 
 
 def get_followers_gender_distr(uid):
     '''获取账号性别分布'''
-    return get_cur_influence(uid).get('followers_genders_dist', {})
+    return get_cur_statistic(uid).get('gender', {})
+
+
+def get_followbrand_flwrs_gender_distr(fid):
+    '''获取竞品粉丝性别分布'''
+    return get_cur_fb_statistic(fid).get('gender', {})
 
 
 def get_followers_quality_distr(uid, reftime=None):
-    '''获取粉丝质量度分布'''
-    return get_cur_influence(uid).get('followers_quality_dist', {})
+    '获取粉丝质量度分布'
+    tmp_record = get_cur_statistic(uid).get('quality', {})
+    for i in range(100):
+        if str(i) not in tmp_record:
+            tmp_record.update({str(i): 0})
+
+    return tmp_record
+
+
+def get_followbrand_flwrs_quality_distr(fid):
+    '获取粉丝质量度分布'
+    tmp_record = get_cur_fb_statistic(fid).get('quality', {})
+    for i in range(100):
+        if str(i) not in tmp_record:
+            tmp_record.update({str(i): 0})
+
+    return tmp_record.items()
+
+
+def get_followers_activeness_distr(uid, reftime=None):
+    '获取粉丝活跃度分布'
+    tmp_record = get_cur_statistic(uid).get('activeness', {})
+    for i in range(100):
+        if str(i) not in tmp_record:
+            tmp_record.update({str(i): 0})
+
+    return tmp_record
+
+
+def get_followbrand_flwrs_activeness_distr(fid):
+    '获取竞品粉丝活跃度分布'
+    tmp_record = get_cur_fb_statistic(fid).get('activeness', {})
+    for i in range(100):
+        if str(i) not in tmp_record:
+            tmp_record.update({str(i): 0})
+
+    return tmp_record
 
 
 def get_followers_tags_distr(uid, reftime=None):
     '''获取粉丝tags分布'''
-    return get_cur_influence(uid).get('followers_tags_dist', {})
+    return get_cur_statistic(uid).get('tags', {})
+
+
+def get_followbrand_flwrs_tags_distr(fid):
+    '''获取竞品粉丝tags分布'''
+    return get_cur_fb_statistic(fid).get('tags', {})
+
+
+def get_followers_verified_distr(uid, reftime=None):
+    '''获取粉丝tags分布'''
+    return get_cur_statistic(uid).get('verified', {})
+
+
+def get_followbrand_flwrs_verified_distr(fid):
+    '''获取粉丝tags分布'''
+    return get_cur_fb_statistic(fid).get('verified', {})
 
 
 def get_celebrity_followers_quality_distr(uid):
@@ -37,18 +107,6 @@ def get_celebrity_followers_quality_distr(uid):
     result = []
     quality_distr = MONGODB_INSTANCE.celebrity.find_one({'celebrity_id':uid})
 
-    if quality_distr:
-        result = quality_distr.get("quality_ratio", {}).items()
-    else:
-        pass
-
-    return result
-
-
-def get_followbrand_followers_quality_distr(uid):
-    '''获取竟品粉丝质量度分布'''
-    result = []
-    quality_distr = MONGODB_INSTANCE.followbrand.find_one({'followbrand_id':uid})
     if quality_distr:
         result = quality_distr.get("quality_ratio", {}).items()
     else:
@@ -157,3 +215,63 @@ def get_hotwords_search(
         result_list = []
 
     return result_list[:total_count]
+
+
+def get_fans_quality_distr(uid):
+    ''' 获取粉丝的质量度分布 '''
+    d = get_followers_quality_distr(uid).items()
+    d.sort(key=lambda x: int(x[0]))
+    sum_count = sum(map(lambda x: x[1], d)) or 1
+
+    title_list = ['低质量用户(0-25)', '普通用户(25-50)', '高质量用户(50-75)', '骨灰用户(75-100)']
+    val_list = [
+        '%0.1f' % (sum(map(lambda x: x[1], d[:25])) * 100.0 / sum_count),
+        '%0.1f' % (sum(map(lambda x: x[1], d[25:50])) * 100.0 / sum_count),
+        '%0.1f' % (sum(map(lambda x: x[1], d[50:75])) * 100.0 / sum_count),
+        '%0.1f' % (sum(map(lambda x: x[1], d[75:])) * 100.0 / sum_count),
+    ]
+
+    return '\\n'.join([
+        ','.join(title_list),
+        ','.join(val_list)
+    ])
+
+
+def get_fans_activeness_data(uid):
+    d = get_followers_activeness_distr(uid).items()
+    d.sort(key=lambda x:int(x[0]))
+    sum_count = sum(map(lambda x: x[1], d)) or 1
+
+    title_list = ['不活跃(0-40)', '普通用户(40-60)', '活跃用户(60-75)', '高活跃用户(75-100)']
+    val_list = [
+        '%0.1f' % (sum(map(lambda x: x[1], d[:40])) * 100.0 / sum_count),
+        '%0.1f' % (sum(map(lambda x: x[1], d[40:60])) * 100.0 / sum_count),
+        '%0.1f' % (sum(map(lambda x: x[1], d[60:75])) * 100.0 / sum_count),
+        '%0.1f' % (sum(map(lambda x: x[1], d[75:])) * 100.0 / sum_count),
+    ]
+
+    return '\\n'.join([
+        ','.join(title_list),
+        ','.join(val_list)
+    ]) 
+
+
+def get_fans_activeness_distr_data(uid, step_length=10):
+    d = get_followers_activeness_distr(uid).items()
+    d.sort(key=lambda x:int(x[0]))
+    data = []
+    dlen = len(d) / step_length
+    num = 0
+
+    sum_count = sum(map(lambda x: x[1], d))
+    
+    for n in range(dlen):
+        s = sum(map(lambda x: x[1], d[n*step_length:][:step_length]))
+        data.append("%s-%s;%0.1f" % (num, num+step_length, 100 * float(s) / max(1.0 , sum_count)))
+        num += step_length 
+    
+    tmp_data = [x.split(';') for x in data]
+    return '\\n'.join([
+        ','.join([x for (x, y) in tmp_data]),
+        ','.join([y for (x, y) in tmp_data])
+    ])
