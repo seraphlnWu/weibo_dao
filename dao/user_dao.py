@@ -6,10 +6,21 @@ from utils import MONGODB_INSTANCE as db
 from influence_dao import get_cur_influence
 from weibo_dao.parser.parser import ModelParser
 
+from statistic_dao import get_followers_quality_distr
+from statistic_dao import get_followers_tags_distr
+from statistic_dao import get_followers_location_distr
+from statistic_dao import get_followers_gender_distr
+from statistic_dao import get_followers_activeness_distr
+
 
 def get_users():
-    ''' 获取全部的用户信息列表 '''
+    ''' 获取全部的有效用户信息列表 '''
     return db.users.find({'sm_deleted': {'$ne': True}})
+
+
+def get_whole_users():
+    ''' 获取全部用户的信息列表 '''
+    return db.users.find()
 
 
 def get_user_by_id(uid):
@@ -54,11 +65,12 @@ def get_user(uid):
     resultdict['fans_quality'] = resultdict['influence']/resultdict['followers_count'] if resultdict['followers_count'] else 0
     resultdict['account_activeness'] = influence.get('account_activeness', 0)
     resultdict['followers_activeness'] = influence.get('followers_activeness', 0)
-    resultdict['followers_quality_dist'] = influence.get('followers_quality_dist', {})
-    resultdict['followers_location_dist'] = influence.get('followers_location_dist', {})
-    resultdict['followers_genders_dist'] = influence.get('followers_genders_dist', {})
-    resultdict['followers_activeness_dist'] = influence.get('followers_activeness_dist', {})
-    resultdict['followers_tags_dist'] = influence.get('followers_tags_dist', {})
+
+    resultdict['followers_quality_dist'] = get_followers_quality_distr(uid)
+    resultdict['followers_location_dist'] = get_followers_location_distr(uid)
+    resultdict['followers_genders_dist'] = get_followers_gender_distr(uid)
+    resultdict['followers_activeness_dist'] = get_followers_activeness_distr(uid)
+    resultdict['followers_tags_dist'] = get_followers_tags_distr(uid)
 
     if resultdict.get('url', '').strip() == 'http://1':
         resultdict['url'] = ''
@@ -155,7 +167,7 @@ def get_fuids(uid, with_followbrand_count=False):
     ''' get followbrand list '''
     result = []
     info = get_user_by_keyword(uid, *{'fuids': 1, 'max_followbrand_count': 1})
-    result.append(info.get('fuids', []))
+    result.extend(info.get('fuids', []))
     if with_followbrand_count:
         result.append(info.get('max_followbrand_count', None))
 

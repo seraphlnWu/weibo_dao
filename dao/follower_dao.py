@@ -1,6 +1,7 @@
 # coding=utf8
 
 from datetime import datetime
+from datetime import timedelta
 
 from base import BaseQuery
 
@@ -98,10 +99,10 @@ def get_new_followers_by_page(
 
     for x in range((end_date-start_date).days):
         tmp_date = end_date - timedelta(days=x)
-        tmp_inf = db.influence.find_one({'id': uid, 'date': tmp_date}) or {}
+        tmp_inf = MONGODB_INSTANCE.influence.find_one({'id': uid, 'date': tmp_date}) or {}
         new_f_list.extend(tmp_inf.get('new_fans_list', []))
 
-    total_count = len(new_fans_list)
+    total_count = len(new_f_list)
     page_sum, rem = divmod(
         total_count,
         records_per_page,
@@ -109,11 +110,12 @@ def get_new_followers_by_page(
 
     page_sum += 1 if 0 == rem else page_sum
 
-    fids = new_fans_list[(page-1)*records_per_page: (page*records_per_page)]
+    fids = new_f_list[(page-1)*records_per_page: (page*records_per_page)]
      
     if fids:
         follow_relations = FollowRelationsDao()
         for cur_id in fids:
+            print cur_id, uid
             results.append(follow_relations.query_one("%s_%s" % (uid, cur_id)))  
 
     page_info = ({
@@ -226,3 +228,13 @@ def get_follower_all(uid, keyword):
         MONGODB_INSTANCE.follow_relations.find({'user_id': uid}).sort(keyword, -1).limit(50)
     )
     return inf
+
+
+def save_cur_follow_relation(dao, row_key, data):
+    ''' save the given follow_relation '''
+    dao.put_one(id=row_key, data=data)
+
+
+def save_cur_follower(dao, fid, data):
+    ''' save the given follower '''
+    dao.put_one(id=str(fid), data=data)
