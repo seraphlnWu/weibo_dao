@@ -6,6 +6,7 @@
 
 import pymongo
 import happybase
+from redis import StrictRedis
 
 from datetime import datetime
 from datetime import timedelta
@@ -14,9 +15,13 @@ import time
 from config import MONGODB_HOST
 from config import MONGODB_PORT
 from config import MONGODB_DBNAME
-
 from config import HBASE_HOST
+from config import INDEX_REDIS_HOST, INDEX_REDIS_PORT, INDEX_REDIS_DB
+from config import INDEX_REDIS_KEY_MAPPING
 
+INDEX_REDIS = StrictRedis(host=INDEX_REDIS_HOST,
+                          port=INDEX_REDIS_PORT,
+                          db=INDEX_REDIS_DB)
 
 def get_db(
     mongo_host=MONGODB_PORT,
@@ -86,3 +91,13 @@ def get_month_start(f_date=None):
 def get_all_start():
     """ 所有起始时间 """
     return datetime(2000, 1, 1)
+
+def get_set_name(type_name, uid):
+    """
+    find given redis key name
+    """
+    if type_name not in INDEX_REDIS_KEY_MAPPING:
+        return ''
+        
+    return '%s%s' % (INDEX_REDIS_KEY_MAPPING.get(type_name), uid)
+    
