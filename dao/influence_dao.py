@@ -164,6 +164,119 @@ def update_cur_influence(uid, today, u_dict):
     )
 
 
+def multi_inf_histories_data(keyword_list, uid, period=7, to_date=None):
+    "集成历史趋势数据"
+    his_list = []
+
+    keyword_dict = {
+        'influence': '微博影响力',
+        'followers_count': '粉丝数',
+        'statuses_count': '微博数',
+        'sm_flash_factor': '曝光',
+        'sm_eyeball_factor': '眼球',
+        'nctc': '新增评论',
+        'nrpc': '新增转发',
+        'nfcnt': '新增粉丝',
+    }
+
+    flag = -1
+    for kw in keyword_list:
+        tmp_result, _flag = get_count_str(
+            get_influence_history(
+                uid,
+                period,
+                to_date,
+            ),
+            kw,
+            flag,
+        )
+        if his_list:
+            tmp_list = [keyword_dict[kw]]
+            for cur_item in tmp_result.split('\\n'):
+                if cur_item:
+                    tmp_list.append(cur_item.split(';')[1])
+            his_list.append(','.join(tmp_list))
+        else:
+            tmp_list = ['Categories']
+            tmp_v_list = [keyword_dict[kw]]
+            for cur_item in tmp_result.split('\\n'):
+                if cur_item:
+                    tmp_data, tmp_val = cur_item.split(';')
+                    tmp_list.append(tmp_data)
+                    tmp_v_list.append(tmp_val)
+            his_list.append(','.join(tmp_list))
+            his_list.append(','.join(tmp_v_list))
+
+        flag = _flag if kw == 'sm_flash_factor' else -1
+
+    if keyword_list[0] == 'nfcnt':
+        result_list = []
+        for his in his_list:
+            result_list.append(','.join(his.split(',')[1:]))
+        his_list = result_list
+    return '\\n'.join(his_list)
+
+
+def get_count_str(histories, keyname, flag=-1):
+    """
+    input:
+        - histories ==> [{},{}]
+        - keyname ==> 'statuses_count' ,
+                        'followers_count' ,
+                        'account_activeness'
+                        'followers_activeness'
+    output:
+        - result ==> 'MON;3\n...'
+    """
+    result = []
+    result_list = [
+        (
+            his.get('date').strftime('%y年%m月%d日'),
+            his.get(keyname, 0)
+        ) for his in histories
+    ]
+
+    for date, count in sorted(result_list):
+        if keyname == "influence":
+            result.append('%s;%0.0f\\n' % (date, count))
+        else:
+            result.append('%s;%0.1f\\n' % (date, count))
+
+    return ''.join(result), flag
+
+
+def get_influence_info(inf_histories, keyword):
+    """
+    input:
+        - histories ==> [{},{}]
+        - keyword ==> 'influence' or 'activeness'
+    output:
+        - result ==> (cur_value, trend)
+    """
+    if len(inf_histories) == 0:
+        return (0, 0)
+    elif len(inf_histories) == 1:
+        return (inf_histories[0].get(keyword, 0), 0)
+    else:
+        if keyword == 'influence':
+            today_value = round(inf_histories[0].get(keyword, 0))
+            yesday_value = round(inf_histories[1].get(keyword, -1))
+        elif keyword == 'followers_activeness':
+            today_value = round(inf_histories[0].get(keyword, 0) * 100)
+            yesday_value = round(inf_histories[1].get(keyword, 0) * 100)
+
+        if not yesday_value:
+            return (today_value, 0)
+        else:
+            return (
+                today_value,
+                [
+                    0,
+                    (float(today_value-yesday_value) * 100 / yesday_value),
+                ][yesday_value > 0],
+            )
+
+
 ##############################################################################
 # excel files
 ##############################################################################
