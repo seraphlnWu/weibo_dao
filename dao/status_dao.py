@@ -2,16 +2,19 @@
 from bson import ObjectId
 from bson.binary import Binary
 
-from base import BaseQuery
-from weibo_dao.dao.utils import MONGODB_INSTANCE
-#from weibo_dao.parser.utils import make_column_name
-
-from smdata.utils import paginate
+from weibo_dao.dao.base import BaseQuery
+from weibo_dao.dao.utils import MONGODB_INSTANCE, INDEX_REDIS
+from weibo_dao.dao.utils import get_set_name
+from weibo_dao.dao.comment_dao import CommentsDao
+from weibo_dao.dao.repost_dao import RepostsDao
 
 class StatusDao(BaseQuery):
     ''' inherit from base query '''
-
     tb_name = 'status'
+
+Status = StatusDao()
+Comment = CommentsDao()
+Repost = RepostsDao()
 
 def save_sent_status(user_name, uid, pic_name, message, upt, cd=None):
     ''' save a status which need to be sent '''
@@ -101,66 +104,52 @@ def get_status_all(uid):
 
     return result
 
-def delete_status(status_id):
+def delete_status(uid, status_id):
     """
-    TODO
     set delete flag of status and corresponding
     comments and reposts True
     """
 
-    MONGODB_INSTANCE.status.update(
-        {"id": status_id},
-        {"$set": {"sm_deleted": True}},
-        safe=True
-    )
+    s_id = '%s_%s' % (uid, status_id)
+    Status.put_one(s_id, {'sm_deleted': True})
 
-    MONGODB_INSTANCE.comments.update(
-        {"status_id": status_id},
-        {"$set": {"sm_deleted": True}},
-        safe=True
-    )
+    for comment in Comment.query(row_prefix=s_id, columns=['id']):
+        Comment.put_one('%s_%s' %(s_id, comment['id']), {'sm_deleted': True})
 
-    MONGODB_INSTANCE.reposts.update(
-        {"retweeted_status_id": status_id},
-        {"$set": {"sm_deleted": True}},
-        safe=True
-    )
+    for repost in Repost.query(row_prefix=id, columns=['id']):
+        Repost.put_one('%s_%s' % (s_id, repost['id']), {'sm_deleted': True})
 
-
-    """
-    Status.put_one({'id': status_id,
-                    'sm_deleted': True})
-
-    comment_dao.put_one({'status_id': status_id,
-                     'sm_deleted': True})
-
-    repost_dao.put_one({'retweeted_status_id': status_id,
-                    'sm_deleted': True})
-    """
 
 
 def get_statuses_by_page(
     uid, 
-    sort_type='created_at', 
-    page=1, 
-    records_per_page=10, 
-    sort_reverse=True
+    page=1,
+    records_per_page=10
 ):
     """
-    TODO
+    using a redis sorted set as a index sorted by created time
+    fetching id from redis, and query hbase to get the final records
     """
-    st_cursor = MONGODB_INSTANCE.status.find({
-            'user_id':uid,
-    }).limit(page*records_per_page)
+    
+    #because hbase scan row_end is exclusive, we need to fetch one more record
+    start = (page - 1) * records_per_page - 1
+    end = start + records_per_page
 
-    page_info, sts_lst = paginate(
-        st_cursor, 
-        sort_type, 
-        page, 
-        records_per_page, 
-        sort_reverse
-    )
+    key_name = get_set_name('Status', uid)
+    ids = INDEX_REDIS.zrevrange(key_name, start, end)
+    sts_lst = Status.query(row_start=ids[-1], row_end=ids[0], limit=records_per_page)
+    
+    page_info = {}
+    page_info['current_page'] = page
+    page_info['records_per_page'] = records_per_page
+    page_info['pre_page'] = page - 1 if page > 1 else page
 
+    if not sts_list:
+        page_info['next_page'] = None
+    else:
+        page_info['next_page'] = page + 1
+
+        
     for cur_status in sts_lst:
         if 'scmt' in cur_status:
             cur_status['comment_count'] = cur_status.get('scmt', 0)
