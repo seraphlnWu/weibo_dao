@@ -7,6 +7,8 @@ from utils import get_all_start
 
 from influence_dao import get_cur_influence
 
+from celebrity_dao import get_celebrity_followers_quality_distr
+
 from random import shuffle
 
 from datetime import datetime
@@ -275,3 +277,43 @@ def get_fans_activeness_distr_data(uid, step_length=10):
         ','.join([x for (x, y) in tmp_data]),
         ','.join([y for (x, y) in tmp_data])
     ])
+
+
+def get_fans_quality_data(uid, step_length=10, flwrs_type=None):
+    ''' 获取粉丝的质量度信息 '''
+    data = []
+    num = 0
+
+    if not flwrs_type:
+        d = get_followers_quality_distr(uid).items()
+    else:
+        uid_tmp = convert_uid(uid)
+        if flwrs_type == 'celebrity':
+            d = get_celebrity_followers_quality_distr(uid_tmp)
+        elif flwrs_type == 'followbrand':
+            d = get_followbrand_flwrs_quality_distr(uid_tmp)
+        else:
+            d = []
+
+    d.sort(key=lambda x: int(x[0]))
+    sum_count = sum(map(lambda x: x[1], d)) or 1
+
+    for n in range(len(d)/step_length):
+        s = sum(map(lambda x: x[1], d[n*step_length:][:step_length]))
+        data.append(
+            "%s-%s;%0.1f" % (
+                num,
+                num+step_length,
+                100 * float(s) / sum_count,
+            )
+        )
+        num += step_length
+
+    tmp_data = [x.split(';') for x in data]
+
+    return '\\n'.join([
+        ','.join([x for (x, y) in tmp_data]),
+        ','.join([y for (x, y) in tmp_data]),
+    ])
+
+
