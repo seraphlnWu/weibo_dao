@@ -6,7 +6,6 @@
 
 import pymongo
 import happybase
-from redis import StrictRedis
 
 from datetime import datetime
 from datetime import timedelta
@@ -16,12 +15,6 @@ from config import MONGODB_HOST
 from config import MONGODB_PORT
 from config import MONGODB_DBNAME
 from config import HBASE_HOST
-from config import INDEX_REDIS_HOST, INDEX_REDIS_PORT, INDEX_REDIS_DB
-from config import INDEX_REDIS_KEY_MAPPING
-
-INDEX_REDIS = StrictRedis(host=INDEX_REDIS_HOST,
-                          port=INDEX_REDIS_PORT,
-                          db=INDEX_REDIS_DB)
 
 def get_db(
     mongo_host=MONGODB_PORT,
