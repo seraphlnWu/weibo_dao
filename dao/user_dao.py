@@ -1,5 +1,6 @@
 # coding=utf8
 from utils import MONGODB_INSTANCE as db
+
 from influence_dao import get_cur_influence
 
 from statistic_dao import get_followers_quality_distr
@@ -72,6 +73,17 @@ def get_user(uid):
         resultdict['url'] = ''
 
     return resultdict
+
+
+def get_fuids(uid, with_followbrand_count=False):
+    ''' get followbrand list '''
+    result = []
+    info = get_user_by_keyword(uid, *{'fuids': 1, 'max_followbrand_count': 1})
+    result.extend(info.get('fuids', []))
+    if with_followbrand_count:
+        result.append(info.get('max_followbrand_count', None))
+
+    return result
 
 
 def add_task(uid, task):
@@ -158,16 +170,6 @@ def get_user_ins():
     users = get_users()
     return [x for x in users if 'ins' in x]
 
-
-def get_fuids(uid, with_followbrand_count=False):
-    ''' get followbrand list '''
-    result = []
-    info = get_user_by_keyword(uid, *{'fuids': 1, 'max_followbrand_count': 1})
-    result.extend(info.get('fuids', []))
-    if with_followbrand_count:
-        result.append(info.get('max_followbrand_count', None))
-
-    return result
 
 def get_buzz_keywords(uid):
     """ get buzz_keywords """

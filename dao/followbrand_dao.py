@@ -1,7 +1,6 @@
 # coding=utf8
 from utils import MONGODB_INSTANCE
 
-from user_dao import get_fuids
 from base import BaseQuery
 
 from influence_dao import get_influence_by_date
@@ -109,16 +108,6 @@ def get_followbrand_by_date(
         return MONGODB_INSTANCE.followbrand.find({'followbrand_id': uid}).sort(sort_type, sort_reverse).limit(limit)
     else:
         return MONGODB_INSTANCE.followbrand.find({'followbrand_id': uid}).sort(sort_type, sort_reverse)
-
-
-def get_followbrand_followers_quality_distr(uid):
-    ''' get the followbrand's flwrs quality distr '''
-    tmp_statistic = get_cur_fb_statistic(uid).get('quality', {})
-    for i in range(100):
-        if str(i) not in tmp_statistic:
-            tmp_statistic.update({str(i): 0})
-    
-    return tmp_statistic
 
 
 def update_cur_fb_influence(uid, today, u_dict):

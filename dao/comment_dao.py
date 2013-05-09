@@ -8,7 +8,7 @@ from user_dao import get_keywords
 
 from base import BaseQuery
 
-from smdata.utils import paginate
+from social_master.smdata.utils import paginate
 
 class CommentsDao(BaseQuery):
     tb_name = 'comments'
