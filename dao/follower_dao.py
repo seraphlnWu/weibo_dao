@@ -115,7 +115,6 @@ def get_new_followers_by_page(
     if fids:
         follow_relations = FollowRelationsDao()
         for cur_id in fids:
-            print cur_id, uid
             results.append(follow_relations.query_one("%s_%s" % (uid, cur_id)))  
 
     page_info = ({

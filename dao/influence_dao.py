@@ -159,8 +159,7 @@ def update_cur_influence(uid, today, u_dict):
             'id': uid,
             'date': today,
         },
-        {"$set": u_dict},
-        safe=True,
+        u_dict,
     )
 
 

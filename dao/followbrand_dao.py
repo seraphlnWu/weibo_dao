@@ -3,6 +3,8 @@ from utils import MONGODB_INSTANCE
 
 from base import BaseQuery
 
+from user_dao import get_fuids
+
 from influence_dao import get_influence_by_date
 
 from statistic_dao import get_followbrand_flwrs_tags_distr
