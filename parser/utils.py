@@ -22,7 +22,7 @@ def parse_str_into_hbase(o_value):
 
 def parse_str_from_hbase(o_value):
     '''convert string to unicode'''
-    if not isinstance(o_value, unicode):
+    if o_value and not isinstance(o_value, unicode):
         try:
             return o_value.decode('utf8')
         except Exception:
