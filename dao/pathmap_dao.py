@@ -1,12 +1,14 @@
 #coding=utf8
-
+import pymongo
 from datetime import datetime, timedelta
 
 from utils import MONGODB_INSTANCE
-from smdata.utils import convert_uid, paginate
-from smdata.utils import call_pathmap
+from weibo_dao.dao.utils import convert_uid, paginate
+from weibo_dao.dao.utils import call_pathmap
+
 
 def get_repost_pathmap(status_id):
+    
     ret = get_one_pathmap(status_id)
     current_time = datetime.now()
     check_time = current_time - timedelta(minutes=5)
@@ -35,11 +37,12 @@ def get_repost_pathmap(status_id):
     return ret["timeline"], ret["kol"], ret["depth_map"], ret["json_str"], ret["json_nfm"]
 
 def get_one_pathmap(status_id):
+    MONGODB_INSTANCE = pymongo.Connection('116.213.213.74')['sandbox_mongo_5']
     ret_cursor = MONGODB_INSTANCE.repost_pathmap.find( 
                                          { "_id":status_id,"finished":1 },
                                          { "update_time":1,"publish_time":1,"timeline":1,"kol":1,"depth_map":1, "json_str":1, "json_nfm":1, }
+    ).sort("update_time",-1).limit(1)
 
-                                       ).sort("update_time",-1).limit(1)
     ret = None
     for item in ret_cursor:
         ret = item

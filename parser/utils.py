@@ -12,7 +12,7 @@ from social_master.weibo_dao import sm_log
 logger = sm_log.get_logger('weibo_hbase_utils')
 
 
-def convert_data(o_value):
+def parse_str_into_hbase(o_value):
     ''' convert the given value to utf8 '''
     if isinstance(o_value, unicode):
         return o_value.encode('utf8')
@@ -20,6 +20,15 @@ def convert_data(o_value):
         return ''
     return str(o_value)
 
+def parse_str_from_hbase(o_value):
+    '''convert string to unicode'''
+    if not isinstance(o_value, unicode):
+        try:
+            return o_value.decode('utf8')
+        except Exception:
+            pass
+    return o_value
+            
 
 def parse_datetime_from_hbase(o_datetime):
     ''' convert the give struct bytes from HBase to datetime. '''
@@ -92,7 +101,7 @@ def parse_list_into_hbase(o_value):
     if not o_value:
         return ""
     else:
-        return ','.join(map(convert_data, o_value))
+        return ','.join(map(parse_str_into_hbase, o_value))
 
 
 DEPARSE_MAPPER = {
@@ -101,7 +110,7 @@ DEPARSE_MAPPER = {
     'datetime': parse_datetime_into_hbase,
     'list': parse_list_into_hbase,
     'float': parse_float_into_hbase,
-    'string': convert_data,
+    'string': parse_str_into_hbase,
 }
 
 PARSE_MAPPER = {
@@ -110,7 +119,7 @@ PARSE_MAPPER = {
     'datetime': parse_datetime_from_hbase,
     'list': parse_list_from_hbase,
     'float': parse_float_from_hbase,
-    'string': convert_data,
+    'string': parse_str_from_hbase,
 }
 
 

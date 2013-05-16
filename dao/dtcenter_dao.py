@@ -1,7 +1,7 @@
 #coding:utf8
 
 from weibo_dao.dao.utils import MONGODB_INSTANCE as db
-from smdata.utils import paginate
+from weibo_dao.dao.utils import paginate
 
 
 def get_tasks_by_page(
