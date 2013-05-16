@@ -98,7 +98,8 @@ def get_followbrands(uid, uidlist, sort_type='influence', sort_reverse=-1):
             ))
             influence_info = influence_info[0] if len(influence_info) > 0 else {}
         followbrand.append(influence_info)
-    return followbrand
+
+    return sorted(followbrand, key=lambda x: x.get(sort_type), reverse=[True, False][sort_reverse<0])
 
 
 def get_followbrand_by_date(
@@ -167,7 +168,7 @@ def get_followbrand_influence_history(fid, period=10, reftime=None, key_dict=Non
         result.append(
             MONGODB_INSTANCE.followbrand_influence.find_one({
                 'id': fid, 'dt': tmp_date
-            }) or {}
+            }) or {'id': fid, 'dt': tmp_date}
         )
 
     return result
