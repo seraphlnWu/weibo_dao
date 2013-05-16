@@ -129,7 +129,7 @@ def get_statuses_by_page(
     records_per_page=10,
     sort_reverse=True
 ):
-    st_cursor = db.status.find({
+    st_cursor = MONGODB_INSTANCE.status.find({
             'user_id':uid,
     }).limit(page*records_per_page)
 
