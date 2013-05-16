@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 from utils import MONGODB_INSTANCE
 from weibo_dao.dao.utils import convert_uid, paginate
-from weibo_dao.dao.utils import call_pathmap
+from social_master.smdata.utils import call_pathmap
 
 
 def get_repost_pathmap(status_id):
