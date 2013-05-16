@@ -3,11 +3,11 @@
 from re import compile as re_compile
 from weibo_dao.dao.base import BaseQuery
 from weibo_dao.dao.utils import MONGODB_INSTANCE
-from smdata.utils import paginate
-from smdata.utils import getLocationList
-from smdata.utils import get_tags_distr
-from smdata.utils import loc_str
-from smdata.utils import convert_uid
+from weibo_dao.dao.utils import paginate
+from weibo_dao.dao.utils import getLocationList
+from weibo_dao.dao.utils import get_tags_distr
+from weibo_dao.dao.utils import loc_str
+from weibo_dao.dao.utils import convert_uid
 
 
 class CelebrityDao(BaseQuery):
