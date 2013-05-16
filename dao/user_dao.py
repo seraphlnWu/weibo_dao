@@ -77,13 +77,11 @@ def get_user(uid):
 
 def get_fuids(uid, with_followbrand_count=False):
     ''' get followbrand list '''
-    result = []
     info = get_user_by_keyword(uid, *{'fuids': 1, 'max_followbrand_count': 1})
-    result.extend(info.get('fuids', []))
     if with_followbrand_count:
-        result.append(info.get('max_followbrand_count', None))
-
-    return result
+        return (info.get('fuids', []), info.get('max_followbrand_count', None))
+    else:
+        return info.get('fuids', [])
 
 
 def add_task(uid, task):

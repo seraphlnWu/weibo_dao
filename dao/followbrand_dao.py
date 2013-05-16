@@ -1,5 +1,7 @@
 # coding=utf8
 from utils import MONGODB_INSTANCE
+from utils import today_datetime
+from datetime import timedelta
 
 from base import BaseQuery
 
@@ -38,7 +40,7 @@ def get_cur_fb_statistic(fid):
 def get_followbrand(followbrand_id):
     ''' get followbrand by followbrand id '''
     resultdict = MONGODB_INSTANCE.followbrand.find_one({
-        'followbrand_id': followbrand_id,
+        '_id': followbrand_id,
     }) or {}
 
     resultdict.update({
@@ -107,9 +109,9 @@ def get_followbrand_by_date(
 ):
     ''' get influence by limit '''
     if limit:
-        return MONGODB_INSTANCE.followbrand.find({'followbrand_id': uid}).sort(sort_type, sort_reverse).limit(limit)
+        return MONGODB_INSTANCE.followbrand.find({'_id': uid}).sort(sort_type, sort_reverse).limit(limit)
     else:
-        return MONGODB_INSTANCE.followbrand.find({'followbrand_id': uid}).sort(sort_type, sort_reverse)
+        return MONGODB_INSTANCE.followbrand.find({'_id': uid}).sort(sort_type, sort_reverse)
 
 
 def update_cur_fb_influence(uid, today, u_dict):
@@ -118,5 +120,72 @@ def update_cur_fb_influence(uid, today, u_dict):
         {
             'id': uid,
             'date': today,
+        },
+        {
+            '$set': u_dict,
         }
     )
+
+
+def get_followbrand_followers(fid, limit=1000):
+    ''' get followbrand followers '''
+    dao = FollowbrandFlwrRelationsDao()
+    return dao.query(row_prefix="%s" % (fid, ), limit=limit)
+
+
+def remove_followbrand(uid, followbrand_id):
+    ''' 删除竞品 '''
+    fuids = get_fuids(uid)
+    if fuids and followbrand_id in fuids:
+        fuids.remove(followbrand_id)
+        MONGODB_INSTANCE.users.update({"_id": uid}, {"$set": {"fuids": fuids}})
+    else:
+        pass #indexOf异常
+
+
+def get_followbrand_influence_history(fid, period=10, reftime=None, key_dict=None):
+    '''
+        get user influence history.
+        
+        @id => 目标uid
+        @period => 默认间隔
+        @reftime => 结束时间
+        @key_dict => 要查询的key列表
+    '''
+    today = today_datetime()
+    if reftime and reftime < today:
+        pass
+    else:
+        reftime = today
+
+    from_date = reftime - timedelta(period)
+
+    result = []
+
+    for i in range(period+1):
+        tmp_date =  from_date + timedelta(days=i)
+        result.append(
+            MONGODB_INSTANCE.followbrand_influence.find_one({
+                'id': fid, 'dt': tmp_date
+            }) or {}
+        )
+
+    return result
+
+    '''
+    if key_dict:
+        result =MONGODB_INSTANCE.followbrand_influence.find(
+            {
+                'id': fid, 
+                'dt': {'$gt': from_date, '$lte': reftime},
+            },
+            key_dict,
+            ).sort('dt', -1)
+    else:
+        result = MONGODB_INSTANCE.followbrand_influence.find({
+            'id': fid, 
+            'dt': {'$gt': from_date, '$lte': reftime},
+        }).sort('dt', -1)
+
+    return result
+    '''

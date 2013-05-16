@@ -26,7 +26,6 @@ class BaseQuery(object):
         self.model = self.m_parser.get_model(self.tb_name)
         self.connection = None
 
-
     def init_table(self):
         if not getattr(self, 'table', None):
             self.connection = happybase.Connection(

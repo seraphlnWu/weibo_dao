@@ -31,11 +31,16 @@ def get_last_influence(uid):
     return MONGODB_INSTANCE.influence.find_one({'id': uid}) or {}
 
 
-def get_influence_history(uid, period=10, reftime=None):
-    ''' 获取一个influence历史记录的列表 '''
-
+def get_influence_history(uid, period=10, reftime=None, key_dict=None):
+    '''
+        get user influence history.
+        
+        @uid => 目标uid
+        @period => 默认间隔
+        @reftime => 结束时间
+        @key_dict => 要查询的key列表
+    '''
     today = today_datetime()
-
     if reftime and reftime < today:
         pass
     else:
@@ -43,12 +48,35 @@ def get_influence_history(uid, period=10, reftime=None):
 
     from_date = reftime - timedelta(period)
 
-    result = MONGODB_INSTANCE.influence.find({
-        'id': uid, 
-        'date': {'$gt': from_date, '$lte': reftime},
-    }).sort('date', -1)
+    result = []
 
-    return check_influence_list(result)
+    for i in range(period+1):
+        tmp_date = from_date + timedelta(days=i)
+        result.append(
+            MONGODB_INSTANCE.influence.find_one(
+                {'id': uid, 'date': tmp_date}
+            ) or {}
+        )
+
+    return result
+
+    '''
+    if key_dict:
+        return MONGODB_INSTANCE.influence.find(
+            {
+                'id': uid, 
+                'date': {'$gt': from_date, '$lte': reftime},
+            },
+            key_dict,
+            ).sort('date', -1)
+    else:
+        result = MONGODB_INSTANCE.influence.find({
+            'id': uid, 
+            'date': {'$gt': from_date, '$lte': reftime},
+        }).sort('date', -1)
+
+        return get_influence_list(result) 
+    '''
 
 
 def check_influence_list(histories):
