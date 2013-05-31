@@ -3,19 +3,39 @@
 from transform.models import HBaseClient
 from parser.parser import ModelParser
 
-HBASE_HOST = '192.168.122.101'
+HBASE_HOST = '116.213.213.106'
 
 TABLE_DCT = {
     'buzz': '%(url)s',
 }
 
-def get(row_key, table_name='buzz'):
+connection = happybase.Connection(
+    host=HBASE_HOST,
+)
+connection.open()
+
+
+def get(row_key, table_name='buzz', columns=None, table=None):
     ''' get one record from hbase by row_key '''
+    #hc = HBaseClient(host=HBASE_HOST)
+    #table = hc.connection.table(table_name)
+    result = ModelParser().serialized(table_name, table.row(row_key, columns=columns))
+    return result
+
+
+def get_all(table_name='buzz', limit=1, row_start=None, row_stop=None, row_prefix=None, columns=None, filter=None, timestamp=None, include_timestamp=False, batch_size=1000):
+    query_dict = {}
+    if limit:
+        query_dict.update({'limit': limit})
+    else:
+        pass
     hc = HBaseClient(host=HBASE_HOST)
     table = hc.connection.table(table_name)
-
-    result = ModelParser().serialized(table_name, table.row(row_key))
-    return result
+    return ModelParser().serialized(
+        table_name,
+        table.scan(**query_dict),
+    )
+        #import ipdb;ipdb.set_trace()
 
 
 def insert_data(o_dict, default_value, table_name='buzz'):
@@ -47,25 +67,48 @@ def batch_insert(o_list, default_value, batch_size=1000, table_name='buzz'):
 
 
 if __name__ == '__main__':
-    import json
     #hc = HBaseClient(host=HBASE_HOST)
     #hc.init_table('buzz', ['bz', ])
 
+    '''
+        在插入数据到HBase之后，插入一条记录到Redis(buzz_store_queue)
+        记录格式如下: 
+        
+          '-'.join([ row_key, '%s_%s' % (uid, 'followRelations'), ]) 
+
+        row_key => HBase中的row_key
+        uid, followRelations => 会组合为文件名的一部分.
+            建议采用 site(uid) + buzz(followRelations)来命名
+    '''
+
+    test_str = 'blablabla'
     test_data = {
         "title": 'testtile',
         "pan":    '0.123',
         "brief":  'testbreif',
-        "url": 'http://dealer.bitauto.com/100019023/news/201303/4212818.html',
+        "url": 'http://Itmaybeatesturl',
         "create_at": 1364370727,
         "author": "testauthor",
         'site:': "testsite",
-        "file_address": 'testfile_address',
         "category": "testcategory",
         "comment_count": 1,
         "view_count": 2,
         "source": "testsource",
         "industry": "testindustry",
+        'src': test_str,
     }
-    result = json.dumps(test_data)
-    insert_data({'content': result}, test_data)
-    print get(test_data.get('url'))
+    table = connection.table('buzz')
+
+    insert_data(
+        test_data,
+        test_data,
+        table_name='buzz',
+    )
+    url = 'http://Itmaybeatesturl'
+
+    print 'here is get whole line'
+    print get(row_key=url, table=table)
+
+    print 'here is only get src'
+    print get(test_data.get('url'), columns=('src', ), table=table)
+    #get_all()

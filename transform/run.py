@@ -23,14 +23,14 @@ from config import MONGODB_NAME
 from parser.parser import ModelParser
 
 TABLE_DCT = {
-    'followers': '%(id)s',
+    #'followers': '%(id)s',
     'follow_relations': '%(user_id)s_%(follower_id)s',
-    'comments': '%(sm_user_id)s_%(status_id)s_%(id)s',
-    'reposts': '%(sm_user_id)s_%(retweeted_status_id)s_%(id)s',
-    'mentions': '%(sm_user_id)s_%(_id)s',
-    'mention_users': '%(sm_user_id)s_%(id)s',
-    'status': '%(user_id)s_%(id)s',
-    'buzz': '%(url)s_%(create_at)s',
+    #'comments': '%(sm_user_id)s_%(status_id)s_%(id)s',
+    #'reposts': '%(sm_user_id)s_%(retweeted_status_id)s_%(id)s',
+    #'mentions': '%(sm_user_id)s_%(_id)s',
+    #'mention_users': '%(sm_user_id)s_%(id)s',
+    #'status': '%(user_id)s_%(id)s',
+    #'buzz': '%(url)s_%(create_at)s',
 }
 
 
@@ -57,15 +57,28 @@ def insert_data(table_name, row_format):
     ''' insert test data '''
     model_parser = ModelParser()
     table = connection.table(table_name)
-    cursor = MONGO_INSTANCE[table_name].find().limit(10)
+    cursor = MONGO_INSTANCE[table_name].find()
+
+    i = 0
     for cur_item in cursor:
-        table.put(
-            row_format % cur_item,
-            model_parser.deserialized(
-                table_name,
-                cur_item,
+        if table_name == 'follow_relations':
+            try:
+                tmp_flwr = MONGO_INSTANCE.followers.find_one({'_id': cur_item.get('follower_id')}) 
+                cur_item.update(tmp_flwr)
+            except:
+                continue
+            cur_record = model_parser.deserialized(
+                    table_name,
+                    cur_item,
+                )
+            table.put(
+                row_format % cur_item,
+                cur_record
             )
-        )
+        i+=1
+        if i >= 100:
+            print i
+            i = 0
 
 
 def insert_all_data():
@@ -77,5 +90,5 @@ def insert_all_data():
         p.join()
 
 if __name__ == '__main__':
-    #init_tables()
+    init_tables()
     #insert_all_data()
