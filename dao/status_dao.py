@@ -125,7 +125,7 @@ def get_statuses_by_page(
     sort_type='created_at',
     page=1,
     records_per_page=10,
-    sort_reverse=True
+    sort_reverse=True,
 ):
     st_cursor = MONGODB_INSTANCE.status.find({
             'user_id':uid,

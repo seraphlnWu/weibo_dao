@@ -115,7 +115,7 @@ def paginate(
         page_info['page_totals'] = stlen / records_per_page + 1
     else:
         page_info['page_totals'] = stlen / records_per_page
-        
+
     page = [page, 1][page < 1 or page > page_info['page_totals']]
     page_info['current_page'] = page
     page_info['records_per_page'] = records_per_page

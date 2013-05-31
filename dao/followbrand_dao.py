@@ -99,7 +99,7 @@ def get_followbrands(uid, uidlist, sort_type='influence', sort_reverse=-1):
             influence_info = influence_info[0] if len(influence_info) > 0 else {}
         followbrand.append(influence_info)
 
-    return sorted(followbrand, key=lambda x: x.get(sort_type), reverse=[True, False][sort_reverse<0])
+    return sorted(followbrand, key=lambda x: x.get(sort_type), reverse=[True, False][sort_reverse>0])
 
 
 def get_followbrand_by_date(
