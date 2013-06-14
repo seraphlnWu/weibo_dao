@@ -31,7 +31,8 @@ def get_hbase_instance(hbase_host=HBASE_HOST, autoconnect=True):
     '''
         get a hbase instance
     '''
-    return happybase.Connection(hbase_host, autoconnect=autoconnect, compat='0.90')
+    return happybase.Connection(hbase_host, autoconnect=autoconnect, compat='0.92')
+    #, compat='0.90')
 
 
 MONGODB_INSTANCE = get_db()
