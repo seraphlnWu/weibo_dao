@@ -124,7 +124,8 @@ def update_cur_fb_influence(uid, today, u_dict):
         },
         {
             '$set': u_dict,
-        }
+        },
+        safe=True,
     )
 
 

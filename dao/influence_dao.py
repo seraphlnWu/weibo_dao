@@ -52,11 +52,13 @@ def get_influence_history(uid, period=10, reftime=None, key_dict=None):
 
     for i in range(period+1):
         tmp_date = from_date + timedelta(days=i)
-        result.append(
-            MONGODB_INSTANCE.influence.find_one(
-                {'id': uid, 'date': tmp_date}
-            ) or {}
+        tmp_record = MONGODB_INSTANCE.influence.find_one(
+            {'id': uid, 'date': tmp_date}
         )
+        if tmp_record:
+            result.append(tmp_record)
+        else:
+            pass
 
     return result
 
