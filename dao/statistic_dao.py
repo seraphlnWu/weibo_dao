@@ -287,7 +287,7 @@ def get_fans_quality_data(uid, step_length=10, flwrs_type=None):
     if not flwrs_type:
         d = get_followers_quality_distr(uid).items()
     else:
-        uid_tmp = convert_uid(uid)
+        uid_tmp = uid
         if flwrs_type == 'celebrity':
             d = get_celebrity_followers_quality_distr(uid_tmp)
         elif flwrs_type == 'followbrand':

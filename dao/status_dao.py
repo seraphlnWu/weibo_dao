@@ -4,11 +4,9 @@ from bson.binary import Binary
 
 from weibo_dao.dao.base import BaseQuery
 from weibo_dao.dao.utils import MONGODB_INSTANCE
-from weibo_dao.dao.utils import get_set_name
 from weibo_dao.dao.comment_dao import CommentsDao
 from weibo_dao.dao.repost_dao import RepostsDao
-
-from social_master.sm_new_tasks.utils import paginate
+from weibo_dao.dao.utils import paginate
 
 class StatusDao(BaseQuery):
     ''' inherit from base query '''
@@ -127,9 +125,9 @@ def get_statuses_by_page(
     sort_type='created_at',
     page=1,
     records_per_page=10,
-    sort_reverse=True
+    sort_reverse=True,
 ):
-    st_cursor = db.status.find({
+    st_cursor = MONGODB_INSTANCE.status.find({
             'user_id':uid,
     }).limit(page*records_per_page)
 

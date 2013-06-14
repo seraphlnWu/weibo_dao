@@ -97,8 +97,8 @@ def get_new_followers_by_page(
     end_date = end_date or today
     start_date = start_date or end_date - timedelta(days=default_period)
 
-    for x in range((end_date-start_date).days):
-        tmp_date = end_date - timedelta(days=x)
+    for x in range((end_date-start_date).days+1):
+        tmp_date = start_date + timedelta(days=x)
         tmp_inf = MONGODB_INSTANCE.influence.find_one({'id': uid, 'date': tmp_date}) or {}
         new_f_list.extend(tmp_inf.get('new_fans_list', []))
 
@@ -108,10 +108,9 @@ def get_new_followers_by_page(
         records_per_page,
     )
 
-    page_sum += 1 if 0 == rem else page_sum
-
+    page_sum += [1, 0][0 == rem]
     fids = new_f_list[(page-1)*records_per_page: (page*records_per_page)]
-     
+
     if fids:
         follow_relations = FollowRelationsDao()
         for cur_id in fids:

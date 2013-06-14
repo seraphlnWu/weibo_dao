@@ -1,18 +1,17 @@
 # coding=utf8
-from utils import MONGODB_INSTANCE
-from utils import today_datetime
-
 from datetime import timedelta
 
-from user_dao import get_keywords
 
-from base import BaseQuery
-
-from social_master.smdata.utils import paginate
+from weibo_dao.dao.user_dao import get_keywords
+from weibo_dao.dao.base import BaseQuery
+from weibo_dao.dao.utils import MONGODB_INSTANCE
+from weibo_dao.dao.utils import today_datetime
+from weibo_dao.dao.utils import paginate
 
 class CommentsDao(BaseQuery):
     tb_name = 'comments'
-    
+
+
 def get_comments_by_page(
     uid, 
     page=1, 
