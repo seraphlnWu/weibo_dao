@@ -76,6 +76,7 @@ def parse_datetime_into_hbase(o_datetime):
 
 def parse_boolean_into_hbase(o_value):
     ''' parse the boolean value to bytes'''
+    o_value = True if o_value else False
     return pack('b', o_value)
 
 def parse_int_into_hbase(o_value):

@@ -34,7 +34,7 @@ class FollowbrandFlwrsDao(BaseQuery):
 
 def get_cur_fb_statistic(fid):
     ''' get the given statistic info '''
-    return db.followbrand_statistic.find_one({'_id': fid})
+    return MONGODB_INSTANCE.followbrand_statistic.find_one({'_id': fid})
 
 
 def get_followbrand(followbrand_id):
@@ -117,14 +117,27 @@ def get_followbrand_by_date(
 
 def update_cur_fb_influence(uid, today, u_dict):
     ''' update the followbrand influence record by uid and today '''
+    print u_dict
+    '''
+    if '$set' not in u_dict:
+        MONGODB_INSTANCE.followbrand_influence.update(
+            {
+                'id': uid,
+                'date': today,
+            },
+            {
+                '$set': u_dict,
+            },
+            safe=True,
+        )
+    else:
+    '''
     MONGODB_INSTANCE.followbrand_influence.update(
         {
             'id': uid,
             'date': today,
         },
-        {
-            '$set': u_dict,
-        },
+        u_dict,
         safe=True,
     )
 

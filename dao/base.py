@@ -16,7 +16,7 @@ class BaseQuery(object):
 
     tb_name = ''
     
-    def __init__(self, hbase_host=HBASE_HOST, autoconnect=True, compat='0.92'):
+    def __init__(self, hbase_host=HBASE_HOST, autoconnect=True, compat='0.90'):
         ''' init func '''
         self.hbase_host = hbase_host
         self.autoconnect = autoconnect
