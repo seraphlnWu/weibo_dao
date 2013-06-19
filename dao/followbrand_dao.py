@@ -117,7 +117,6 @@ def get_followbrand_by_date(
 
 def update_cur_fb_influence(uid, today, u_dict):
     ''' update the followbrand influence record by uid and today '''
-    print u_dict
     '''
     if '$set' not in u_dict:
         MONGODB_INSTANCE.followbrand_influence.update(

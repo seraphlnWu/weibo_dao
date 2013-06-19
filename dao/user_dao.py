@@ -12,7 +12,7 @@ from statistic_dao import get_followers_activeness_distr
 
 def get_users():
     ''' 获取全部的有效用户信息列表 '''
-    return db.users.find({'sm_deleted': {'$ne': True}})
+    return db.users.find({'sm_deleted': {'$ne': True}}, timeout=False)
 
 
 def get_whole_users():

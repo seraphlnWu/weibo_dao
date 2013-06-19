@@ -26,6 +26,8 @@ class BaseQuery(object):
         self.model = self.m_parser.get_model(self.tb_name)
         self.connection = None
 
+        self.init_table()
+
     def init_table(self):
         if not getattr(self, 'table', None):
             self.connection = happybase.Connection(
@@ -48,7 +50,6 @@ class BaseQuery(object):
         @batch_size (int) – batch size for retrieving results
         @limit (int) - number of records to be fetched
         '''
-        self.init_table()
         if 'columns' in kwargs:
             kwargs['columns'] = self._convert_column_name(kwargs['columns'])
 
@@ -65,7 +66,6 @@ class BaseQuery(object):
         @timestamp (int) – timestamp (optional)
         @include_timestamp (bool) – whether timestamps are returned
         '''
-        self.init_table()
         if 'columns' in kwargs:
             kwargs['columns'] = self._convert_column_name(kwargs['columns'])
 
@@ -82,7 +82,6 @@ class BaseQuery(object):
         @timestamp (int) – timestamp (optional)
         '''
 
-        self.init_table()
         self.table.put(
             id,
             self.m_parser.deserialized(self.tb_name, data),
@@ -96,7 +95,6 @@ class BaseQuery(object):
         @columns (list_or_tuple) – list of columns (optional)
         @timestamp (int) – timestamp (optional)
         '''
-        self.init_table()
         self.table.delete(id, columns=columns, **kwargs)
 
 
@@ -112,13 +110,11 @@ class BaseQuery(object):
         @column (str) – the column name
         @value (int) – the amount to increment or decrement by (optional)
         """
-        self.init_table()
         column = self._convert_column_name([column])[0]
         return self.table.counter_inc(row, column, value)
 
 
     def counter_dec(self, row, column, value=1):
-        self.init_table()
         column = self._convert_column_name([column])[0]
         return self.table.counter_dec(row, column, value)
 
@@ -132,7 +128,6 @@ class BaseQuery(object):
         @row (str) – the row key
         @column (str) – the column name
         """
-        self.init_table()
         return self.table.counter_get(row, column)
         
     def exist(self, id):
