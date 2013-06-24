@@ -236,3 +236,9 @@ def save_cur_follow_relation(dao, row_key, data):
 def save_cur_follower(dao, fid, data):
     ''' save the given follower '''
     dao.put_one(id=str(fid), data=data)
+
+
+def get_followers(uid, limit=1000):
+    ''' get user's followers '''
+    dao = FollowRelationsDao()
+    return dao.query(row_prefix="%s" % (uid, ), limit=limit)
