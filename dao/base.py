@@ -1,9 +1,9 @@
 # coding=utf8
-from weibo_dao.dao.utils import get_hbase_instance
 from weibo_dao.parser.parser import ModelParser
 
-from config import HBASE_HOST
+from config import HBASE_HOST, HBASE_COMPAT, POOL_SIZE
 import happybase
+
 
 
 ''' base class for data query.  '''
@@ -15,28 +15,15 @@ class BaseQuery(object):
     ''' base class for data query '''
 
     tb_name = ''
-    
-    def __init__(self, hbase_host=HBASE_HOST, autoconnect=True, compat='0.90'):
-        ''' init func '''
-        self.hbase_host = hbase_host
-        self.autoconnect = autoconnect
-        self.compat = compat
 
+    pool = happybase.ConnectionPool(POOL_SIZE, host=HBASE_HOST, compat=HBASE_COMPAT)
+
+    def __init__(self, tb_name):
+        self.tb_name = tb_name
         self.m_parser = ModelParser()
         self.model = self.m_parser.get_model(self.tb_name)
-        self.connection = None
 
-        self.init_table()
 
-    def init_table(self):
-        if not getattr(self, 'table', None):
-            self.connection = happybase.Connection(
-                self.hbase_host,
-                autoconnect=self.autoconnect,
-                compat=self.compat,
-            )
-            self.table = self.connection.table(self.tb_name)
-    
     def query(self, **kwargs):
         '''
         query a bunch of results
@@ -53,10 +40,11 @@ class BaseQuery(object):
         if 'columns' in kwargs:
             kwargs['columns'] = self._convert_column_name(kwargs['columns'])
 
-        return self.m_parser.serialized(
-            self.tb_name,
-            self.table.scan(**kwargs),
-        )
+        with self.pool.connection() as conn:
+            return self.m_parser.serialized(
+                self.tb_name,
+                conn.table(self.tb_name).scan(**kwargs),
+            )
 
     def query_one(self, id, **kwargs):
         '''
@@ -69,11 +57,12 @@ class BaseQuery(object):
         if 'columns' in kwargs:
             kwargs['columns'] = self._convert_column_name(kwargs['columns'])
 
-        return self.m_parser.serialized(
-            self.tb_name,
-            self.table.row(id, **kwargs),
-        )
-    
+        with self.pool.connection() as conn:            
+            return self.m_parser.serialized(
+                self.tb_name,
+                conn.table(self.tb_name).row(id, **kwargs),
+            )
+
     def put_one(self, id, data, **kwargs):
         '''
         put / update one record
@@ -82,11 +71,12 @@ class BaseQuery(object):
         @timestamp (int) – timestamp (optional)
         '''
 
-        self.table.put(
-            id,
-            self.m_parser.deserialized(self.tb_name, data),
-            **kwargs
-        )
+        with self.pool.connection() as conn:         
+            conn.table(self.tb_name).put(
+                id,
+                self.m_parser.deserialized(self.tb_name, data),
+                **kwargs
+            )
 
     def delete(self, id, columns=None, **kwargs):
         '''
@@ -95,8 +85,8 @@ class BaseQuery(object):
         @columns (list_or_tuple) – list of columns (optional)
         @timestamp (int) – timestamp (optional)
         '''
-        self.table.delete(id, columns=columns, **kwargs)
-
+        with self.pool.connection() as conn: 
+            conn.table(self.tb_name).delete(id, columns=columns, **kwargs)
 
     def counter_inc(self, row, column, value=1):
         """
@@ -111,13 +101,15 @@ class BaseQuery(object):
         @value (int) – the amount to increment or decrement by (optional)
         """
         column = self._convert_column_name([column])[0]
-        return self.table.counter_inc(row, column, value)
-
+        with self.pool.connection() as conn: 
+            return conn.table(self.tb_name).counter_inc(row, column, value)
 
     def counter_dec(self, row, column, value=1):
         column = self._convert_column_name([column])[0]
-        return self.table.counter_dec(row, column, value)
+        with self.pool.connection() as conn: 
+            return conn.table(self.tb_name).counter_dec(row, column, value)
 
+            
     def counter_get(self, row, column):
         """
         Retrieve the current value of a counter column. This method retrieves
@@ -128,8 +120,10 @@ class BaseQuery(object):
         @row (str) – the row key
         @column (str) – the column name
         """
-        return self.table.counter_get(row, column)
-        
+        with self.pool.connection() as conn: 
+            return conn.table(self.tb_name).counter_get(row, column)
+
+
     def exist(self, id):
         '''
         check the given id if already exists, subclass can rewrite
@@ -147,6 +141,13 @@ class BaseQuery(object):
         return [self.model.columns_dct[c]['column_name']
                 for c in columns if c in self.model.columns_dct]
 
-    def close(self):
-        ''' close the connection '''
-        self.connection.close()
+    @classmethod
+    def close(cls):
+        ''' close connections in the pool '''
+        for i in range(POOL_SIZE):
+            try:
+                conn = cls.pool._queue.get(True, 10)
+                conn.close()
+            except:
+                pass
+
