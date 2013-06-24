@@ -7,9 +7,9 @@ from datetime import datetime
 from struct import pack
 from struct import unpack
 
-from social_master.weibo_dao import sm_log
+#from social_master.weibo_dao import sm_log
 
-logger = sm_log.get_logger('weibo_hbase_utils')
+#logger = sm_log.get_logger('weibo_hbase_utils')
 
 
 def parse_str_into_hbase(o_value):
@@ -36,7 +36,8 @@ def parse_datetime_from_hbase(o_datetime):
     try:
         result = datetime.strptime(o_datetime, '%Y-%m-%d %H:%M:%S')
     except ValueError as msg:
-        logger.info(str(msg))
+        pass
+        #logger.info(str(msg))
 
     return result
 
@@ -76,6 +77,7 @@ def parse_datetime_into_hbase(o_datetime):
 
 def parse_boolean_into_hbase(o_value):
     ''' parse the boolean value to bytes'''
+    o_value = True if o_value else False
     return pack('b', o_value)
 
 def parse_int_into_hbase(o_value):

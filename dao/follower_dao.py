@@ -9,7 +9,6 @@ from utils import MONGODB_INSTANCE
 from utils import today_datetime
 
 
-
 class FollowersDao(BaseQuery):
     ''' inherit from base query '''
     tb_name = 'followers'

@@ -3,7 +3,6 @@
 from types import GeneratorType
 from models import ModelFactory
 from error import DataError
-from types import GeneratorType
 
 
 class Parser(object):
