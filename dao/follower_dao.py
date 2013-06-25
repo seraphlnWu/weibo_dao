@@ -16,6 +16,9 @@ class FollowersDao(BaseQuery):
 class FollowRelationsDao(BaseQuery):
     tb_name = 'follow_relations'
 
+FollowRelation = BaseQuery('follow_relations')
+Follower = BaseQuery('followers')
+
 def get_follower_attr(uid, follower_id, attrs):
     """返回针对当前用户的评论数"""
     dao = FollowRelationsDao('follow_relations')
