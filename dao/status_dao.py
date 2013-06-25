@@ -12,9 +12,9 @@ class StatusDao(BaseQuery):
     ''' inherit from base query '''
     tb_name = 'status'
 
-Status = StatusDao()
-Comment = CommentsDao()
-Repost = RepostsDao()
+Status = StatusDao('status')
+Comment = CommentsDao('comments')
+Repost = RepostsDao('reposts')
 
 def save_sent_status(user_name, uid, pic_name, message, upt, cd=None):
     ''' save a status which need to be sent '''

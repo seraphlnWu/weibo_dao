@@ -143,7 +143,7 @@ def update_cur_fb_influence(uid, today, u_dict):
 
 def get_followbrand_followers(fid, limit=1000):
     ''' get followbrand followers '''
-    dao = FollowbrandFlwrRelationsDao()
+    dao = FollowbrandFlwrRelationsDao('followbrand_flwr_relations')
     return dao.query(row_prefix="%s" % (fid, ), limit=limit)
 
 

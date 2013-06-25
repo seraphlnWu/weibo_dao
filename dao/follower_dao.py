@@ -18,7 +18,7 @@ class FollowRelationsDao(BaseQuery):
 
 def get_follower_attr(uid, follower_id, attrs):
     """返回针对当前用户的评论数"""
-    dao = FollowRelationsDao()
+    dao = FollowRelationsDao('follow_relations')
     return dao.query_one(id='%s_%s' % (uid, follower_id), columns=attrs)
 
 
@@ -111,7 +111,7 @@ def get_new_followers_by_page(
     fids = new_f_list[(page-1)*records_per_page: (page*records_per_page)]
 
     if fids:
-        follow_relations = FollowRelationsDao()
+        follow_relations = FollowRelationsDao('follow_relations')
         for cur_id in fids:
             results.append(follow_relations.query_one("%s_%s" % (uid, cur_id)))  
 
