@@ -12,7 +12,7 @@ class StatusDao(BaseQuery):
     ''' inherit from base query '''
     tb_name = 'status'
 
-Status = StatusDao('status')
+Status = BaseQuery('status')
 
 
 def save_sent_status(user_name, uid, pic_name, message, upt, cd=None):

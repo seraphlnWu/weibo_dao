@@ -9,20 +9,12 @@ from utils import MONGODB_INSTANCE
 from utils import today_datetime
 
 
-class FollowersDao(BaseQuery):
-    ''' inherit from base query '''
-    tb_name = 'followers'
-
-class FollowRelationsDao(BaseQuery):
-    tb_name = 'follow_relations'
-
 FollowRelation = BaseQuery('follow_relations')
 Follower = BaseQuery('followers')
 
 def get_follower_attr(uid, follower_id, attrs):
     """返回针对当前用户的评论数"""
-    dao = FollowRelationsDao('follow_relations')
-    return dao.query_one(id='%s_%s' % (uid, follower_id), columns=attrs)
+    return FollowRelation.query_one(id='%s_%s' % (uid, follower_id), columns=attrs)
 
 
 def get_cache_flwr_by_page(
@@ -114,9 +106,8 @@ def get_new_followers_by_page(
     fids = new_f_list[(page-1)*records_per_page: (page*records_per_page)]
 
     if fids:
-        follow_relations = FollowRelationsDao('follow_relations')
         for cur_id in fids:
-            results.append(follow_relations.query_one("%s_%s" % (uid, cur_id)))  
+            results.append(FollowRelation.query_one("%s_%s" % (uid, cur_id)))  
 
     page_info = ({
         'records_per_page': records_per_page,
@@ -242,5 +233,4 @@ def save_cur_follower(dao, fid, data):
 
 def get_followers(uid, limit=1000):
     ''' get user's followers '''
-    dao = FollowRelationsDao()
-    return dao.query(row_prefix="%s" % (uid, ), limit=limit)
+    return FollowRelation.query(row_prefix="%s" % (uid, ), limit=limit)
