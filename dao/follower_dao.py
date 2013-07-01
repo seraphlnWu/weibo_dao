@@ -107,8 +107,6 @@ def get_new_followers_by_page(
     for cur_id in fids:
         results.append(follow_relations.query_one("%s_%s" % (uid, cur_id)))
 
-    print MONGODB_INSTANCE, follow_relations
-
     page_info = ({
         'records_per_page': records_per_page,
         'sort_type': sort_type,
