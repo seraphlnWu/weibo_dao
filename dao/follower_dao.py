@@ -42,7 +42,7 @@ def get_cache_flwr_by_page(
         page_info['page_totals'] = stlen / records_per_page + 1
     else:
         page_info['page_totals'] = stlen / records_per_page
-        
+
     page = [page, 1][page < 1 or page > page_info['page_totals']]
     page_info['current_page'] = page
     page_info['records_per_page'] = records_per_page
@@ -51,20 +51,10 @@ def get_cache_flwr_by_page(
     page_info['sort_type'] = sort_type
 
     result_list = []
+    fr_dao = BaseQuery('follow_relations')
     for flwr in flwrs:
         fid = flwr[1]
-        tmp_flwr = MONGODB_INSTANCE.follow_relations.find_one({'user_id': uid, 'follower_id': fid})
-        ret = MONGODB_INSTANCE.followers.find_one({'_id': fid})
-        if ret:
-            tmp_flwr.update({
-                'name': ret['name'], 
-                'profile_image_url': ret['profile_image_url'], 
-                'verified': ret.get('verified'),
-                'gender': ret.get('gender'),
-                'location': ret.get('location'),
-                'id': ret.get('_id'),
-                'created_at_': ret.get('created_at'),
-            })
+        tmp_flwr = fr_dao.query_one('%s_%s' % (uid, fid))
         if tmp_flwr:
             tmp_flwr.update({sort_type: flwr[2]})
             result_list.append((flwr[0], tmp_flwr))
@@ -75,7 +65,10 @@ def get_flwr_cache(uid, sort_type):
     """
     TODO
     """
-    return
+    return MONGODB_INSTANCE.flwr_cache.find_one(
+        {'_id': uid},
+        {sort_type: 1},
+    ).get(sort_type, [])
 
 
 def get_new_followers_by_page(
@@ -90,6 +83,7 @@ def get_new_followers_by_page(
     ''' get new followers by influence records '''
 
     today = today_datetime()
+    follow_relations = BaseQuery('follow_relations')
     results = []
     new_f_list = []
 
@@ -97,7 +91,7 @@ def get_new_followers_by_page(
     start_date = start_date or end_date - timedelta(days=default_period)
 
     for x in range((end_date-start_date).days+1):
-        tmp_date = start_date + timedelta(days=x)
+        tmp_date = end_date - timedelta(days=x)
         tmp_inf = MONGODB_INSTANCE.influence.find_one({'id': uid, 'date': tmp_date}) or {}
         new_f_list.extend(tmp_inf.get('new_fans_list', []))
 
@@ -110,10 +104,10 @@ def get_new_followers_by_page(
     page_sum += [1, 0][0 == rem]
     fids = new_f_list[(page-1)*records_per_page: (page*records_per_page)]
 
-    if fids:
-        follow_relations = FollowRelationsDao('follow_relations')
-        for cur_id in fids:
-            results.append(follow_relations.query_one("%s_%s" % (uid, cur_id)))  
+    for cur_id in fids:
+        results.append(follow_relations.query_one("%s_%s" % (uid, cur_id)))
+
+    print MONGODB_INSTANCE, follow_relations
 
     page_info = ({
         'records_per_page': records_per_page,
