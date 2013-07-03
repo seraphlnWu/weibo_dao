@@ -18,7 +18,8 @@ TABLE_DCT = {
 FOLLOW_RELATIONS_COLUMN_DICT = {
     'uid': {'column_name': 'fr:uid', 'type': 'int'},
     'fid': {'column_name': 'fr:fid', 'type': 'int'},
-    'created_at': {'column_name': 'fr:ca', 'type': 'datetime'},
+    'instore_at': {'column_name': 'fr:ca', 'type': 'datetime'},
+    'created_at': {'column_name': 'fr:fca', 'type': 'datetime'},
     'followers_count': {'column_name': 'fr:foc', 'type': 'int'},
     'statuses_count': {'column_name': 'fr:sc', 'type': 'int'},
     'friends_count': {'column_name': 'fr:frc', 'type': 'int'},
