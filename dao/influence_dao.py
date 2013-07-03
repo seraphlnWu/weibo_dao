@@ -50,6 +50,7 @@ def get_influence_history(uid, period=10, reftime=None, key_dict=None):
 
     result = []
 
+    '''
     for i in range(period+1):
         tmp_date = from_date + timedelta(days=i)
         tmp_record = MONGODB_INSTANCE.influence.find_one(
@@ -61,8 +62,8 @@ def get_influence_history(uid, period=10, reftime=None, key_dict=None):
             pass
 
     return result
-
     '''
+
     if key_dict:
         return MONGODB_INSTANCE.influence.find(
             {
@@ -78,7 +79,6 @@ def get_influence_history(uid, period=10, reftime=None, key_dict=None):
         }).sort('date', -1)
 
         return get_influence_list(result) 
-    '''
 
 
 def check_influence_list(histories):
