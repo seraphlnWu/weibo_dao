@@ -1,13 +1,37 @@
 # coding=utf8
+import threading
+import Queue
+
 from weibo_dao.parser.parser import ModelParser
 
 from config import HBASE_HOST, HBASE_COMPAT, POOL_SIZE
 import happybase
 
 
+class LazyConnectionPool(happybase.ConnectionPool):
+    """
+    avoid initializing first connection, all connections are lazy
+    """
+    
+    def __init__(self, size, **kwargs):
+        if not isinstance(size, int):
+            raise TypeError("Pool 'size' arg must be an integer")
 
-''' base class for data query.  '''
+        if not size > 0:
+            raise ValueError("Pool 'size' arg must be greater than zero")
 
+        self._lock = threading.Lock()
+        self._queue = Queue.LifoQueue(maxsize=size)
+        self._thread_connections = threading.local()
+
+        connection_kwargs = kwargs
+        connection_kwargs['autoconnect'] = False
+
+        for i in xrange(size):
+            connection = happybase.Connection(**connection_kwargs)
+            self._queue.put(connection)
+
+            
 class ResultList(list):
     ''' the return datastructure '''
 
@@ -16,7 +40,7 @@ class BaseQuery(object):
 
     tb_name = ''
 
-    pool = happybase.ConnectionPool(POOL_SIZE, host=HBASE_HOST, compat=HBASE_COMPAT)
+    pool = LazyConnectionPool(POOL_SIZE, host=HBASE_HOST, compat=HBASE_COMPAT)
 
     def __init__(self, tb_name):
         self.tb_name = tb_name
@@ -140,6 +164,7 @@ class BaseQuery(object):
         '''
         return [self.model.columns_dct[c]['column_name']
                 for c in columns if c in self.model.columns_dct]
+
 
     @classmethod
     def close(cls):

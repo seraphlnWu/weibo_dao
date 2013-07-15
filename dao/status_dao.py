@@ -4,8 +4,8 @@ from bson.binary import Binary
 
 from weibo_dao.dao.base import BaseQuery
 from weibo_dao.dao.utils import MONGODB_INSTANCE
-from weibo_dao.dao.comment_dao import CommentsDao
-from weibo_dao.dao.repost_dao import RepostsDao
+from weibo_dao.dao.comment_dao import Comment
+from weibo_dao.dao.repost_dao import Repost
 from weibo_dao.dao.utils import paginate
 
 class StatusDao(BaseQuery):
@@ -13,8 +13,7 @@ class StatusDao(BaseQuery):
     tb_name = 'status'
 
 Status = StatusDao('status')
-Comment = CommentsDao('comments')
-Repost = RepostsDao('reposts')
+
 
 def save_sent_status(user_name, uid, pic_name, message, upt, cd=None):
     ''' save a status which need to be sent '''

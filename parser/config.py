@@ -19,6 +19,7 @@ FOLLOW_RELATIONS_COLUMN_DICT = {
     'uid': {'column_name': 'fr:uid', 'type': 'int'},
     'fid': {'column_name': 'fr:fid', 'type': 'int'},
     'created_at': {'column_name': 'fr:ca', 'type': 'datetime'},
+    'user_created_at': {'column_name': 'fr:fca', 'type': 'datetime'},
     'followers_count': {'column_name': 'fr:foc', 'type': 'int'},
     'statuses_count': {'column_name': 'fr:sc', 'type': 'int'},
     'friends_count': {'column_name': 'fr:frc', 'type': 'int'},
@@ -41,6 +42,9 @@ FOLLOW_RELATIONS_COLUMN_DICT = {
     'ad_cate': {'column_name': 'fr:acte', 'type': 'float'},
     'ad_sr': {'column_name': 'fr:asr', 'type': 'string'},
     'ad_val': {'column_name': 'fr:avl', 'type': 'float'},
+    'is_zombie': {'column_name': 'fr:iz', 'type': 'int'},
+    'birthday': {'column_name': 'fr:bt', 'type': 'datetime'},
+    'vtype': {'column_name': 'fr:vt', 'type': 'string'},
 }
 
 FOLLOWERS_COLUMN_DICT = {
@@ -72,6 +76,9 @@ FOLLOWERS_COLUMN_DICT = {
     'ad_cate': {'column_name': 'fa:acte', 'type': 'float'},
     'ad_sr': {'column_name': 'fa:asr', 'type': 'string'},
     'ad_val': {'column_name': 'fa:avl', 'type': 'float'},
+    'is_zombie': {'column_name': 'fa:iz', 'type': 'int'},
+    'birthday': {'column_name': 'fa:bt', 'type': 'datetime'},
+    'vtype': {'column_name': 'fa:vt', 'type': 'string'},
 }
 
 COMMENTS_COLUMN_DICT = {

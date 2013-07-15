@@ -11,6 +11,7 @@ from weibo_dao.dao.utils import paginate
 class CommentsDao(BaseQuery):
     tb_name = 'comments'
 
+Comment = BaseQuery('comments')
 
 def get_comments_by_page(
     uid, 
