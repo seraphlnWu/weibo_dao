@@ -210,6 +210,7 @@ FOLLOWBRAND_FLWR_RELATIONS_COLUMN_DICT = {
     'uid': {'column_name': 'ffr:uid', 'type': 'int'},
     'fid': {'column_name': 'ffr:fid', 'type': 'int'},
     'created_at': {'column_name': 'ffr:ca', 'type': 'datetime'},
+    'user_created_at': {'column_name': 'ffr:fca', 'type': 'datetime'},
     'followers_count': {'column_name': 'ffr:foc', 'type': 'int'},
     'statuses_count': {'column_name': 'ffr:sc', 'type': 'int'},
     'friends_count': {'column_name': 'ffr:frc', 'type': 'int'},
@@ -232,6 +233,9 @@ FOLLOWBRAND_FLWR_RELATIONS_COLUMN_DICT = {
     'ad_cate': {'column_name': 'ffr:acte', 'type': 'float'},
     'ad_sr': {'column_name': 'ffr:asr', 'type': 'string'},
     'ad_val': {'column_name': 'ffr:avl', 'type': 'float'},
+    'is_zombie': {'column_name': 'ffr:iz', 'type': 'int'},
+    'birthday': {'column_name': 'ffr:bt', 'type': 'datetime'},
+    'vtype': {'column_name': 'ffr:vt', 'type': 'string'},
 
 }
 
