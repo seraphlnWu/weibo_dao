@@ -105,7 +105,8 @@ def get_new_followers_by_page(
     fids = new_f_list[(page-1)*records_per_page: (page*records_per_page)]
 
     for cur_id in fids:
-        results.append(follow_relations.query_one("%s_%s" % (uid, cur_id)))
+        tmp_result = follow_relations.query_one("%s_%s" % (uid, cur_id))
+        results.append(tmp_result)
 
     page_info = ({
         'records_per_page': records_per_page,

@@ -175,15 +175,13 @@ def get_followbrand_influence_history(fid, period=10, reftime=None, key_dict=Non
     from_date = reftime - timedelta(period)
 
     result = []
-
     for i in range(period+1):
-        tmp_date =  from_date + timedelta(days=i)
+        tmp_date =  reftime - timedelta(days=i)
         result.append(
             MONGODB_INSTANCE.followbrand_influence.find_one({
                 'id': fid, 'dt': tmp_date
             }) or {'id': fid, 'dt': tmp_date}
         )
-
     return result
 
     '''
@@ -191,14 +189,14 @@ def get_followbrand_influence_history(fid, period=10, reftime=None, key_dict=Non
         result =MONGODB_INSTANCE.followbrand_influence.find(
             {
                 'id': fid, 
-                'dt': {'$gt': from_date, '$lte': reftime},
+                'dt': {'$gte': from_date, '$lte': reftime},
             },
             key_dict,
             ).sort('dt', -1)
     else:
         result = MONGODB_INSTANCE.followbrand_influence.find({
             'id': fid, 
-            'dt': {'$gt': from_date, '$lte': reftime},
+            'dt': {'$gte': from_date, '$lte': reftime},
         }).sort('dt', -1)
 
     return result

@@ -48,7 +48,10 @@ class Model(object):
 
         for key, value in json.iteritems():
             t_dct = self.reverse_column_dct.get(key)
-            user[t_dct['column_name']] = PARSE_MAPPER[t_dct['type']](value)
+            try:
+                user[t_dct['column_name']] = PARSE_MAPPER[t_dct['type']](value)
+            except TypeError:
+                pass
 
         return user
 

@@ -68,14 +68,14 @@ def get_influence_history(uid, period=10, reftime=None, key_dict=None):
         return MONGODB_INSTANCE.influence.find(
             {
                 'id': uid, 
-                'date': {'$gt': from_date, '$lte': reftime},
+                'date': {'$gte': from_date, '$lte': reftime},
             },
             key_dict,
             ).sort('date', -1)
     else:
         result = MONGODB_INSTANCE.influence.find({
             'id': uid, 
-            'date': {'$gt': from_date, '$lte': reftime},
+            'date': {'$gte': from_date, '$lte': reftime},
         }).sort('date', -1)
 
         return get_influence_list(result) 
@@ -193,7 +193,7 @@ def update_cur_influence(uid, today, u_dict):
     )
 
 
-def multi_inf_histories_data(keyword_list, uid, period=7, to_date=None):
+def multi_inf_histories_data(keyword_list, uid, period=6, to_date=None):
     "集成历史趋势数据"
     his_list = []
 
