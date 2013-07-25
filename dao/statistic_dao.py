@@ -133,10 +133,7 @@ def save_login_time_records(admaster_user):
     now = datetime.now()
     record = get_last_login_time_records(admaster_user)
 
-    if any([
-        not record,
-        (now-record['at']).seconds >= 5*60,
-    ]):
+    if not record or (now-record['at']).seconds >= 5*60:
         MONGODB_INSTANCE.login_time_records.insert(
             {
                 "user_id": admaster_user.id,

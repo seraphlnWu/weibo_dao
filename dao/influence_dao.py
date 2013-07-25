@@ -340,6 +340,8 @@ def get_histories_for_excel(uid, from_date=None, to_date=None):
             'nrpc': 1,
             'followers_count': 1,
             'statuses_count': 1,
+            'sm_flash_factor': 1,
+            'sm_eyeball_factor': 1,
         }
     ).sort('date', -1)
         

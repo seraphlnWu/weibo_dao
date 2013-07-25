@@ -188,3 +188,19 @@ def convert_uid(id_str):
         return int(id_str)
     else:
         return str(id_str)
+
+
+def format_date(created_at):
+    """ 格式化创建时间 """
+    if isinstance(created_at, unicode):
+        return datetime.strptime(created_at, '%a %b %d %H:%M:%S +%f %Y')
+    else:
+        return created_at
+
+
+def cur_min_datetime():
+    return datetime.strptime(
+        '%04d%02d%02d%02d%02d' % (
+            lambda x: (x.year, x.month, x.day, x.hour, x.minute)
+        )(datetime.now()),
+        '%Y%m%d%H%M')

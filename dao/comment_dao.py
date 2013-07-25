@@ -46,8 +46,20 @@ def get_comments_by_page(
         records_per_page,
     )
 
-    return page_info, map(
-        lambda x: (
+    comments_list = []
+    for x in comments:
+        tmp_sts = MONGODB_INSTANCE.status.find_one(
+            {'_id': x['status_id']},
+            {'text': 1},
+        ) or {}
+        tmp_txt = tmp_sts.get('text', "")
+
+        if len(tmp_txt) > 15:
+            tmp_txt = ''.join([tmp_txt[:15], '...'])
+        else:
+            pass
+
+        tmp_tup = (
             x['status_id'],
             x['sm_user_id'],
             x['text'],
@@ -56,7 +68,10 @@ def get_comments_by_page(
             x.get('profile_image_url',
                 '/sm_media/img/default_thumbnail.gif'),
             x['user_id'],
-            x['id']
-        ),
-        comments
-    )
+            x['id'],
+            tmp_txt,
+        )
+
+        comments_list.append(tmp_tup)
+
+    return page_info, comments_list

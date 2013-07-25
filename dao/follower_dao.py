@@ -59,7 +59,7 @@ def get_cache_flwr_by_page(
         fid = flwr[1]
         tmp_flwr = fr_dao.query_one('%s_%s' % (uid, fid))
         if tmp_flwr:
-            tmp_flwr.update({sort_type: flwr[2]})
+            tmp_flwr.update({sort_type: flwr[2], 'id': fid})
             result_list.append((flwr[0], tmp_flwr))
 
     return page_info, result_list
@@ -109,6 +109,7 @@ def get_new_followers_by_page(
 
     for cur_id in fids:
         tmp_result = follow_relations.query_one("%s_%s" % (uid, cur_id))
+        tmp_result.update({'id': cur_id})
         results.append(tmp_result)
 
     page_info = ({
