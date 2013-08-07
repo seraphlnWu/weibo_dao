@@ -17,15 +17,29 @@ from config import MONGODB_DBNAME
 from config import HBASE_HOST
 from config import APP_TYPE
 
+import config
+
+
 def get_db(
-    mongo_host=MONGODB_PORT,
-    mongo_port=MONGODB_PORT,
-    mongo_dbname=MONGODB_DBNAME
+    mongo_host=config.MONGODB_HOST,
+    mongo_port=config.MONGODB_PORT,
+    mongo_dbname=config.MONGODB_DBNAME
 ):
     '''
         get a mongodb instance
     '''
-    return pymongo.Connection(MONGODB_HOST, MONGODB_PORT)['sandbox_mongo_5']
+    return pymongo.Connection(mongo_host, mongo_port)[mongo_dbname]
+
+
+def get_crm_db():
+    return get_db(config.CRM_HOST, config.CRM_PORT, config.CRM_DBNAME)
+
+
+def get_sl_db():
+    pass
+
+def get_qq_db():
+    pass
 
 
 def get_hbase_instance(hbase_host=HBASE_HOST, autoconnect=True):

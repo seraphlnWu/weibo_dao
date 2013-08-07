@@ -2,6 +2,8 @@
 import threading
 import Queue
 
+import pymongo
+
 from weibo_dao.parser.parser import ModelParser
 
 from config import HBASE_HOST, HBASE_COMPAT, POOL_SIZE
@@ -175,4 +177,3 @@ class BaseQuery(object):
                 conn.close()
             except:
                 pass
-

@@ -65,6 +65,7 @@ def get_followbrands(uid, uidlist, sort_type='influence', sort_reverse=-1):
     fuids = get_fuids(uid)
     followbrand = []
     for fuid in fuids:
+        print fuid, type(fuid)
         if fuid in uidlist:
             influence_info = list(get_influence_by_date(
                 fuid,
@@ -90,13 +91,14 @@ def get_followbrands(uid, uidlist, sort_type='influence', sort_reverse=-1):
             influence_info['fans_activeness'] = user_info.get("followers_activeness", 0)
             influence_info['activeness'] = user_info.get("account_activeness", 0)
         else:
-            influence_info = list(get_followbrand_by_date(
+            influence_info = get_followbrand_by_date(
                 fuid,
                 sort_type,
                 sort_reverse,
                 limit=1,
-            ))
-            influence_info = influence_info[0] if len(influence_info) > 0 else {}
+            )
+            print influence_info.count()
+            influence_info = influence_info[0] if influence_info.count() > 0 else {}
         followbrand.append(influence_info)
 
     return sorted(followbrand, key=lambda x: x.get(sort_type), reverse=[True, False][sort_reverse>0])
