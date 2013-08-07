@@ -19,6 +19,10 @@ from config import APP_TYPE
 
 import config
 
+DB_PLATFORM_MAPPER = {
+    'sina': get_db,
+    'tencent': get_qq_db,
+}
 
 def get_db(
     mongo_host=config.MONGODB_HOST,
