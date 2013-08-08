@@ -19,10 +19,6 @@ from config import APP_TYPE
 
 import config
 
-DB_PLATFORM_MAPPER = {
-    'sina': get_db,
-    'tencent': get_qq_db,
-}
 
 def get_db(
     mongo_host=config.MONGODB_HOST,
@@ -222,3 +218,9 @@ def cur_min_datetime():
             lambda x: (x.year, x.month, x.day, x.hour, x.minute)
         )(datetime.now()),
         '%Y%m%d%H%M')
+
+
+DB_PLATFORM_MAPPER = {
+    'sina': get_db,
+    'tencent': get_qq_db,
+}
