@@ -11,6 +11,6 @@ CRM_DBNAME = 'sandbox_mongo_5'
 #hbase configuration
 HBASE_HOST = '116.213.213.106'
 HBASE_COMPAT = '0.90'
-POOL_SIZE = 3
+POOL_SIZE = 50
 
 APP_TYPE = 'SINA'
